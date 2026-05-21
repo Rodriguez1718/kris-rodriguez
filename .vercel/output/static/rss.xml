@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kris Rodriguez</title>
+    <description>Design &amp; Development</description>
+    <link>http://localhost:4321</link>
+    <atom:link href="http://localhost:4321/rss.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 21 May 2026 04:04:14 GMT</lastBuildDate>
+    <item>
+      <title>Smart Resilience</title>
+      <link>http://localhost:4321/work/smart-resilience</link>
+      <guid isPermaLink="true">http://localhost:4321/work/smart-resilience</guid>
+      <pubDate>Tue, 15 Dec 2026 00:00:00 GMT</pubDate>
+      <description>A wearable device designed for children use to track their location with an application accompanied by it to be used by parents.</description>
+    </item>
+    <item>
+      <title>Electrician Template</title>
+      <link>http://localhost:4321/work/electrician-template</link>
+      <guid isPermaLink="true">http://localhost:4321/work/electrician-template</guid>
+      <pubDate>Mon, 11 May 2026 00:00:00 GMT</pubDate>
+      <description>A reliable electrician service website that provides fast, safe, and high-quality electrical solutions for homes and businesses. It offers easy access to services such as wiring installation, electrical repairs, maintenance, lighting setup, and emergency support. Designed for convenience, the site allows users to quickly book appointments, request quotes, and get expert assistance from licensed electricians. Built with a focus on safety, efficiency, and customer satisfaction, it ensures every project is handled with precision and care.</description>
+    </item>
+    <item>
+      <title>Plumbing Template</title>
+      <link>http://localhost:4321/work/plumbing-template</link>
+      <guid isPermaLink="true">http://localhost:4321/work/plumbing-template</guid>
+      <pubDate>Mon, 11 May 2026 00:00:00 GMT</pubDate>
+      <description>A clean, modern plumbing website template designed to present services clearly and professionally. It features a structured layout that highlights key offerings, improves navigation, and makes it easy for users to access information and get in touch quickly.</description>
+    </item>
+    <item>
+      <title>ToDo Website</title>
+      <link>http://localhost:4321/work/to-do-website</link>
+      <guid isPermaLink="true">http://localhost:4321/work/to-do-website</guid>
+      <pubDate>Tue, 17 Mar 2026 00:00:00 GMT</pubDate>
+      <description>A responsive todo list web application built to improve task organization and productivity. It allows users to create, update, and delete tasks through a simple and intuitive interface. The project focuses on clean UI design, efficient state handling, and user-friendly interaction to demonstrate practical front-end development skills.</description>
+    </item>
+  </channel>
+</rss>

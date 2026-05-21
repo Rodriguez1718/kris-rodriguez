@@ -1,0 +1,11 @@
+{
+  "title": "Electrician Template",
+  "summary": "A reliable electrician service website that provides fast, safe, and high-quality electrical solutions for homes and businesses. It offers easy access to services such as wiring installation, electrical repairs, maintenance, lighting setup, and emergency support. Designed for convenience, the site allows users to quickly book appointments, request quotes, and get expert assistance from licensed electricians. Built with a focus on safety, efficiency, and customer satisfaction, it ensures every project is handled with precision and care.",
+  "client": "N-Compass",
+  "year": 2026,
+  "published_at": "2026-05-11",
+  "featured_image": "/images/projects/electrician-template/featured_image.png",
+  "content": "A reliable electrician service website that provides fast, safe, and high-quality electrical solutions for homes and businesses. It offers easy access to services such as wiring installation, electrical repairs, maintenance, lighting setup, and emergency support. Designed for convenience, the site allows users to quickly book appointments, request quotes, and get expert assistance from licensed electricians. Built with a focus on safety, efficiency, and customer satisfaction, it ensures every project is handled with precision and care.",
+  "tag": "ui-ux, development, astro, html, tailwind",
+  "url": "https://electrician-template-sage.vercel.app/"
+}

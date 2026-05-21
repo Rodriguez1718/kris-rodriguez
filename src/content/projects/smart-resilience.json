@@ -1,0 +1,10 @@
+{
+  "title": "Smart Resilience",
+  "summary": "A wearable device designed for children use to track their location with an application accompanied by it to be used by parents.",
+  "client": "Personal Project",
+  "year": 2025,
+  "published_at": "2026-12-15",
+  "featured_image": "/images/projects/smart-resilience/featured_image.png",
+  "content": "A safety-focused device designed for children ages 5–12, featuring GPS-based location tracking, GSM emergency alert functionality, and geofencing technology for creating map safe zones. The system notifies guardians when the device enters or exits designated areas, helping improve child safety and real-time monitoring.",
+  "tag": "flutter, firebase, IoT"
+}

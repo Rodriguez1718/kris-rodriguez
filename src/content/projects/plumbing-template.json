@@ -1,0 +1,11 @@
+{
+  "title": "Plumbing Template",
+  "summary": "A clean, modern plumbing website template designed to present services clearly and professionally. It features a structured layout that highlights key offerings, improves navigation, and makes it easy for users to access information and get in touch quickly.",
+  "client": "N-Compass",
+  "year": 2026,
+  "published_at": "2026-05-11",
+  "featured_image": "/images/projects/plumbing-template/featured_image.png",
+  "content": "The Archive was a major exhibition at the City Museum, showcasing 50 years of modernist architecture through photographs, drawings, and models. We designed the complete print identity. The 240-page catalog uses a strict grid system inspired by the work being exhibited. Full-bleed photography alternates with dense text spreads, creating a rhythm that echoes the exhibition layout.",
+  "tag": "react, development, html, css",
+  "url": "https://plumbing-template-sage.vercel.app/"
+}
