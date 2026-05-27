@@ -1,0 +1,9 @@
+name = "kris-portfolio"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "kris-portfolio-db"
+database_id = "YOUR_D1_DATABASE_ID_HERE"

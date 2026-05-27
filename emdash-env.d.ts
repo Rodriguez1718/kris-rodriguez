@@ -64,7 +64,8 @@ export interface Project {
   slug: string | null;
   status: string;
   title: string;
-  featured_image: { id: string; src?: string; alt?: string; width?: number; height?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> };
+  featured_image?: string;
+  featured_image_alt?: string;
   client?: string;
   year?: string;
   summary?: string;
