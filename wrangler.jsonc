@@ -2,17 +2,11 @@
 	"name": "kris-portfolio",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
-	"assets": { "directory": "./dist" },
+	"pages_build_output_dir": "./dist",
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "kris-portfolio-db"
-		}
-	],
-	"r2_buckets": [
-		{
-			"binding": "MEDIA",
-			"bucket_name": "kris-portfolio-media"
 		}
 	]
 }
