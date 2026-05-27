@@ -270,9 +270,9 @@ const titleWords = title.split(" ");
 								<ProjectCard
 									title={project.data.title ?? "Untitled"}
 									summary={project.data.summary}
-									featuredImage={project.data.featured_image?.src ? {
-										src: project.data.featured_image.src,
-										alt: project.data.featured_image.alt
+									featuredImage={project.data.featured_image ? {
+										src: project.data.featured_image,
+										alt: project.data.featured_image_alt ?? project.data.title
 									} : null}
 									href={`/work/${project.id}`}
 									client={project.data.client}

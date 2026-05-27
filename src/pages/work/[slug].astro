@@ -32,7 +32,7 @@ if (import.meta.env.PROD && Astro.cache?.enabled) {
 	Astro.cache.set(allProjectsCache);
 }
 
-const featuredImgSrc = project.data.featured_image?.src ?? undefined;
+const featuredImgSrc = project.data.featured_image ?? undefined;
 ---
 
 <Base
@@ -91,8 +91,8 @@ const featuredImgSrc = project.data.featured_image?.src ?? undefined;
 			project.data.featured_image && (
 				<div class="featured-image">
 					<img
-						src={project.data.featured_image.src}
-						alt={project.data.featured_image.alt ?? project.data.title}
+						src={project.data.featured_image}
+						alt={project.data.featured_image_alt ?? project.data.title}
 						loading="lazy"
 					/>
 				</div>
@@ -118,9 +118,9 @@ const featuredImgSrc = project.data.featured_image?.src ?? undefined;
 							<ProjectCard
 								title={p.data.title ?? "Untitled"}
 								summary={p.data.summary}
-								featuredImage={p.data.featured_image?.src ? {
-									src: p.data.featured_image.src,
-									alt: p.data.featured_image.alt
+								featuredImage={p.data.featured_image ? {
+									src: p.data.featured_image,
+									alt: p.data.featured_image_alt ?? p.data.title
 								} : null}
 								href={`/work/${p.id}`}
 								client={p.data.client}

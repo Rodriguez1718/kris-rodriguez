@@ -31,9 +31,14 @@
         },
         {
           "slug": "featured_image",
-          "label": "Featured Image",
-          "type": "image",
+          "label": "Featured Image URL",
+          "type": "string",
           "required": true
+        },
+        {
+          "slug": "featured_image_alt",
+          "label": "Featured Image Alt Text",
+          "type": "string"
         },
         {
           "slug": "client",
@@ -369,13 +374,8 @@
           "summary": "An electrician Template",
           "url": "https://electrician-template-sage.vercel.app/",
           "tag": "Astro, HTML, Tailwind",
-          "featured_image": {
-            "$media": {
-              "url": "https://cdn.sanity.io/images/8lwtqgtp/production/3306f3ceb31a1583d1e3376505316260c47ff5a0-1901x904.png",
-              "alt": "Electrician Template",
-              "filename": "electrician-template.png"
-            }
-          },
+          "featured_image": "https://cdn.sanity.io/images/8lwtqgtp/production/3306f3ceb31a1583d1e3376505316260c47ff5a0-1901x904.png",
+          "featured_image_alt": "Electrician Template",
           "content": [
             {
               "_type": "block",
@@ -403,13 +403,8 @@
           "summary": "Plumbing template",
           "url": "https://plumbing-template-sage.vercel.app/",
           "tag": "Astro, HTML, Tailwind",
-          "featured_image": {
-            "$media": {
-              "url": "https://cdn.sanity.io/images/8lwtqgtp/production/5102a804dcda8726d14b137a9594e64d92758214-1897x908.png",
-              "alt": "Plumbing Template",
-              "filename": "plumbing-template.png"
-            }
-          },
+          "featured_image": "https://cdn.sanity.io/images/8lwtqgtp/production/5102a804dcda8726d14b137a9594e64d92758214-1897x908.png",
+          "featured_image_alt": "Plumbing Template",
           "content": [
             {
               "_type": "block",
@@ -437,13 +432,8 @@
           "summary": "Todo website for easy tracking of tasks.",
           "url": "https://todo-website-kappa-ten.vercel.app/",
           "tag": "Astro, HTML, Supabase",
-          "featured_image": {
-            "$media": {
-              "url": "https://cdn.sanity.io/images/8lwtqgtp/production/ca0611b90508a6dafb8b304de7b46f2fbcbde8a3-1902x906.png",
-              "alt": "Todo Website",
-              "filename": "todo-website.png"
-            }
-          },
+          "featured_image": "https://cdn.sanity.io/images/8lwtqgtp/production/ca0611b90508a6dafb8b304de7b46f2fbcbde8a3-1902x906.png",
+          "featured_image_alt": "Todo Website",
           "content": [
             {
               "_type": "block",
