@@ -23,5 +23,8 @@ npm-debug.log*
 .dev.vars
 .dev.vars.*
 
+# Wrangler cache
+.wrangler/
+
 # macOS
 .DS_Store
