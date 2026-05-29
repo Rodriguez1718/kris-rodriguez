@@ -20,4 +20,9 @@ export default defineConfig({
 		}),
 	],
 	devToolbar: { enabled: false },
+	vite: {
+		ssr: {
+			noExternal: true,
+		},
+	},
 });

@@ -118,10 +118,7 @@ const featuredImgSrc = project.data.featured_image ?? undefined;
 							<ProjectCard
 								title={p.data.title ?? "Untitled"}
 								summary={p.data.summary}
-								featuredImage={p.data.featured_image ? {
-									src: p.data.featured_image,
-									alt: p.data.featured_image_alt ?? p.data.title
-								} : null}
+								featuredImage={p.data.featured_image as any}
 								href={`/work/${p.id}`}
 								client={p.data.client}
 								year={p.data.year}

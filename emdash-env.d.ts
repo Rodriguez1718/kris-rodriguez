@@ -9,7 +9,7 @@ export interface About {
   id: string;
   slug: string | null;
   status: string;
-  content?: PortableTextBlock[];
+  content: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -20,8 +20,8 @@ export interface Contact {
   id: string;
   slug: string | null;
   status: string;
-  platform?: string;
-  url?: string;
+  platform: string;
+  url: string;
   display_label?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -33,26 +33,23 @@ export interface Experience {
   id: string;
   slug: string | null;
   status: string;
-  company?: string;
-  role?: string;
+  company: string;
+  role: string;
   start_date?: string;
   end_date?: string;
-  description?: PortableTextBlock[];
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
   bylines?: ContentBylineCredit[];
 }
 
-export interface Profile {
+export interface Page {
   id: string;
   slug: string | null;
   status: string;
-  name?: string;
-  title?: string;
-  intro?: PortableTextBlock[];
-  resume_url?: string;
-  avatar_url?: string;
+  title: string;
+  content?: PortableTextBlock[];
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -64,14 +61,13 @@ export interface Project {
   slug: string | null;
   status: string;
   title: string;
-  featured_image: { id: string; src?: string; alt?: string; width?: number; height?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> };
+  featured_image: string;
+  featured_image_alt?: string;
   client?: string;
   year?: string;
   summary?: string;
   content?: PortableTextBlock[];
-  gallery?: unknown;
   url?: string;
-  live_url?: string;
   tag?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -83,7 +79,7 @@ export interface Skill {
   id: string;
   slug: string | null;
   status: string;
-  name?: string;
+  name: string;
   category?: string;
   level?: string;
   createdAt: Date;
@@ -97,7 +93,7 @@ declare module "emdash" {
     abouts: About;
     contacts: Contact;
     experiences: Experience;
-    profiles: Profile;
+    pages: Page;
     projects: Project;
     skills: Skill;
   }
