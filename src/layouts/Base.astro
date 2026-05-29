@@ -1,5 +1,4 @@
 ---
-import { getSiteSettings } from "emdash";
 import "../styles/theme.css";
 
 interface Props {
@@ -11,16 +10,15 @@ interface Props {
 
 const { title, description, image, type = "website" } = Astro.props;
 
-const settings = await getSiteSettings();
-const siteTitle = settings?.title || "Kris Rodriguez";
-const siteTagline = settings?.tagline || "Design & Development";
+const siteTitle = "Kris Rodriguez";
+const siteTagline = "Design & Development";
 const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
 const siteDescription = description || siteTagline;
 
 const navLinks = [
-	{ label: "Work", url: "/work" },
-	{ label: "About", url: "/#about" },
-	{ label: "Contact", url: "/#contact" },
+	{ label: "Work", url: "/work", num: "01" },
+	{ label: "About", url: "/#about", num: "02" },
+	{ label: "Contact", url: "/#contact", num: "03" },
 ];
 ---
 
@@ -31,6 +29,7 @@ const navLinks = [
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{fullTitle}</title>
 		<meta name="description" content={siteDescription} />
+		<link rel="icon" type="image/png" href="/KRIS.png" />
 		{image && <meta property="og:image" content={image} />}
 		<meta property="og:type" content={type} />
 		<meta property="og:title" content={fullTitle} />
@@ -38,7 +37,7 @@ const navLinks = [
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Allura&family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Syne:wght@400..800&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Anton&family=Allura&family=Playfair+Display:ital,wght@0,400..700;1,400..700&family=Syne:wght@400..800&family=Space+Mono:wght@700&display=swap"
 			rel="stylesheet"
 		/>
 		<link
@@ -47,34 +46,49 @@ const navLinks = [
 			title={`${siteTitle} RSS Feed`}
 			href="/rss.xml"
 		/>
-		<script is:inline>
-			// Apply theme immediately to prevent flash
-			(function () {
-				var c = document.cookie;
-				var i = c.indexOf("theme=");
-				var theme = i >= 0 ? c.slice(i + 6).split(";")[0] : null;
-				if (theme === "dark" || theme === "light") {
-					document.documentElement.classList.add(theme);
-				} else if (
-					window.matchMedia("(prefers-color-scheme: dark)").matches
-				) {
-					document.documentElement.classList.add("dark");
-				}
-			})();
-		</script>
 	</head>
 	<body>
+		<!-- Page Loader -->
+		<div class="page-loader" id="pageLoader">
+			<div class="loader-grid" id="gridLines"></div>
+			<div class="loader-content">
+				<div class="loader-number" id="loaderNumber">0%</div>
+			</div>
+		</div>
+
+		<!-- Top Bar -->
 		<header class="site-header">
 			<nav class="nav">
 				<a href="/" class="site-title">{siteTitle}</a>
-				<div class="nav-links">
-					{navLinks.map((item) => (
-						<a href={item.url}>{item.label}</a>
-					))}
-					<a href="/_emdash/admin" class="nav-admin">Admin</a>
+				<div class="magnetic-zone">
+					<button class="menu-btn" id="menuBtn" aria-label="Open menu">
+						<span class="menu-btn-label" id="menuLabel">Menu</span>
+						<span class="menu-btn-icon" id="menuIcon">
+							<span></span>
+							<span></span>
+						</span>
+					</button>
 				</div>
 			</nav>
 		</header>
+
+		<!-- Fullscreen Menu Overlay -->
+		<div class="menu-overlay" id="menuOverlay">
+			<div class="menu-overlay-inner">
+				<nav class="menu-nav">
+					{navLinks.map((item) => (
+						<a href={item.url} class="menu-nav-item" data-num={item.num}>
+							<span class="menu-nav-num">{item.num}</span>
+							<span class="menu-nav-label">{item.label}</span>
+						</a>
+					))}
+				</nav>
+				<div class="menu-footer">
+					<span class="menu-tagline">{siteTagline}</span>
+					<a href="https://www.sanity.io/manage/personal/project/8lwtqgtp" target="_blank" rel="noopener noreferrer" class="menu-admin">Admin</a>
+				</div>
+			</div>
+		</div>
 
 		<main>
 			<slot />
@@ -82,101 +96,253 @@ const navLinks = [
 
 		<footer class="site-footer">
 			<div class="footer-content">
-				<div class="footer-brand">
-					<span class="footer-logo">{siteTitle}</span>
-					<p class="footer-tagline">{siteTagline}</p>
-				</div>
-				<div class="footer-right">
-					<div class="theme-switcher">
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="light"
-							aria-label="Light mode">Light</button
-						>
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="dark"
-							aria-label="Dark mode">Dark</button
-						>
-						<button
-							type="button"
-							class="theme-btn"
-							data-theme="system"
-							aria-label="System theme">System</button
-						>
+				<!-- Top row -->
+				<div class="footer-top">
+					<div class="footer-top-left">
+						<div class="footer-availability">
+							<span class="availability-dot"></span>
+							<span>Available for work</span>
+						</div>
+						<p class="footer-tagline">Designing & engineering<br/>exceptional digital experiences.</p>
 					</div>
-					<p class="footer-powered">
-						Built with <a href="https://astro.build">Astro</a>
-					</p>
+					<div class="footer-top-right">
+						<div class="footer-location">
+							<span class="footer-meta-label">Based in</span>
+							<span class="footer-meta-value">Cebu, Philippines</span>
+						</div>
+						<div class="footer-timezone">
+							<span class="footer-meta-label">Timezone</span>
+							<span class="footer-meta-value" id="footerTime">PHT UTC+8</span>
+						</div>
+					</div>
 				</div>
+
+				<!-- Bottom row -->
+				<div class="footer-bottom">
+					<div class="footer-left">
+						<p class="footer-copyright">© 2026 {siteTitle}. All rights reserved.</p>
+					</div>
+					<div class="footer-center">
+						<a href="mailto:contact@example.com" class="footer-link footer-social">
+							<span class="footer-social-label">Email</span>
+							<span class="footer-social-arrow">↗</span>
+						</a>
+						<a href="https://github.com" target="_blank" class="footer-link footer-social">
+							<span class="footer-social-label">GitHub</span>
+							<span class="footer-social-arrow">↗</span>
+						</a>
+						<a href="https://linkedin.com" target="_blank" class="footer-link footer-social">
+							<span class="footer-social-label">LinkedIn</span>
+							<span class="footer-social-arrow">↗</span>
+						</a>
+					</div>
+					<div class="footer-right">
+						<div class="magnetic-zone">
+							<a href="/Rodriguez_CV.pdf" download class="footer-cv-btn">
+								<span>Download CV</span>
+								<span class="cv-arrow">↓</span>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- Big name -->
+				<div class="footer-hero">
+					<h2 class="footer-name">RODRIGUEZ</h2>
+				</div>
+
 			</div>
 		</footer>
 
-		<script>
-			// Theme switcher
-			const THEME_REGEX = /theme=([^;]+)/;
-			const themeBtns =
-				document.querySelectorAll<HTMLButtonElement>(".theme-btn");
-			const root = document.documentElement;
+		<script is:inline>
+			document.addEventListener('DOMContentLoaded', () => {
+				// ── Page Loader ──
+				const loader = document.getElementById('pageLoader');
+				const loaderNumber = document.getElementById('loaderNumber');
+				const gridLines = document.getElementById('gridLines');
+				const gridCount = 28;
+				const lines = [];
 
-			function setTheme(theme: string) {
-				const secure = location.protocol === "https:" ? "; Secure" : "";
-				if (theme === "system") {
-					document.cookie = `theme=; path=/; max-age=0; SameSite=Lax${secure}`;
-					root.classList.remove("light", "dark");
-					if (
-						window.matchMedia("(prefers-color-scheme: dark)")
-							.matches
-					) {
-						root.classList.add("dark");
+				if (gridLines) {
+					const W = window.innerWidth;
+					const center = W / 2;
+
+					for (let i = 0; i < gridCount; i++) {
+						const line = document.createElement('div');
+						line.className = 'grid-line';
+						const x = (i / (gridCount - 1)) * W;
+						line.style.left = x + 'px';
+						gridLines.appendChild(line);
+						lines.push({ el: line, x });
 					}
-				} else {
-					document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax${secure}`;
-					root.classList.remove("light", "dark");
-					root.classList.add(theme);
+
+					let progress = 0;
+
+					const interval = setInterval(() => {
+						progress += Math.random() * 5 + 2;
+						if (progress > 100) progress = 100;
+
+						if (loaderNumber) {
+							loaderNumber.textContent = Math.floor(progress) + '%';
+						}
+
+						const scaleY = 0.05 + (progress / 100) * 0.95;
+						lines.forEach(({ el }) => {
+							el.style.transition = 'none';
+							el.style.transform = `scaleY(${scaleY})`;
+						});
+
+						if (progress >= 100) {
+							clearInterval(interval);
+
+							setTimeout(() => {
+								if (loaderNumber) {
+									loaderNumber.style.transform = 'translateY(120px)';
+									loaderNumber.style.opacity = '0';
+								}
+							}, 200);
+
+							setTimeout(() => {
+								lines.forEach(({ el, x }) => {
+									const dist = x - center;
+									el.style.transition = 'transform 0.7s cubic-bezier(0.76,0,0.24,1)';
+									el.style.transform = `translateX(${-dist}px) scaleY(1)`;
+								});
+							}, 500);
+
+							setTimeout(() => {
+								lines.forEach(({ el }) => {
+									el.style.display = 'none';
+								});
+
+								loader.style.background = 'transparent';
+
+								const left = document.createElement('div');
+								const right = document.createElement('div');
+								const shared = `
+									position: absolute; top: 0; height: 100%;
+									width: 50%; background: var(--color-bg);
+									transition: transform 0.7s cubic-bezier(0.76,0,0.24,1);
+								`;
+								left.style.cssText = shared + 'left: 0;';
+								right.style.cssText = shared + 'right: 0;';
+								loader.appendChild(left);
+								loader.appendChild(right);
+
+								left.getBoundingClientRect();
+								left.style.transform = 'translateX(-100%)';
+								right.style.transform = 'translateX(100%)';
+
+								setTimeout(() => {
+									loader?.classList.add('loaded');
+								}, 700);
+							}, 1300);
+						}
+					}, 110);
 				}
-				updateActiveBtn(theme);
-			}
 
-			function updateActiveBtn(theme: string) {
-				themeBtns.forEach((btn) => {
-					btn.classList.toggle("active", btn.dataset.theme === theme);
+				// ── Menu Toggle ──
+				const menuBtn = document.getElementById('menuBtn');
+				const menuOverlay = document.getElementById('menuOverlay');
+				const menuLabel = document.getElementById('menuLabel');
+
+				let menuOpen = false;
+
+				menuBtn?.addEventListener('click', () => {
+					menuOpen = !menuOpen;
+					menuOverlay?.classList.toggle('is-open', menuOpen);
+					menuBtn?.classList.toggle('is-open', menuOpen);
+					if (menuLabel) menuLabel.textContent = menuOpen ? 'Close' : 'Menu';
+					document.body.style.overflow = menuOpen ? 'hidden' : '';
 				});
-			}
 
-			function getStoredTheme(): string {
-				const match = document.cookie.match(THEME_REGEX);
-				return match ? match[1] : "system";
-			}
-
-			// Initialize - apply stored theme on load
-			const storedTheme = getStoredTheme();
-			setTheme(storedTheme);
-
-			themeBtns.forEach((btn) => {
-				btn.addEventListener("click", () => {
-					setTheme(btn.dataset.theme || "system");
+				document.querySelectorAll('.menu-nav-item').forEach(link => {
+					link.addEventListener('click', () => {
+						menuOpen = false;
+						menuOverlay?.classList.remove('is-open');
+						menuBtn?.classList.remove('is-open');
+						if (menuLabel) menuLabel.textContent = 'Menu';
+						document.body.style.overflow = '';
+					});
 				});
+
+				// ── Magnetic Menu Button ──
+				const magneticZone = document.querySelector('.site-header .magnetic-zone');
+				const btn = magneticZone?.querySelector('.menu-btn');
+				const strength = 0.35;
+
+				if (magneticZone && btn) {
+					let rect = null;
+
+					magneticZone.addEventListener('pointerenter', () => {
+						rect = magneticZone.getBoundingClientRect();
+					});
+
+					magneticZone.addEventListener('mousemove', (e) => {
+						const currentRect = rect || magneticZone.getBoundingClientRect();
+						rect = currentRect;
+						const x = ((e.clientX - currentRect.left) / currentRect.width - 0.5) * currentRect.width;
+						const y = ((e.clientY - currentRect.top) / currentRect.height - 0.5) * currentRect.height;
+
+						btn.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+						btn.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+
+					magneticZone.addEventListener('mouseleave', () => {
+						rect = null;
+						btn.style.transform = 'translate(0, 0)';
+						btn.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+				}
+
+				// ── Magnetic CV Button ──
+				const cvMagneticZone = document.querySelector('.footer-right .magnetic-zone');
+				const cvBtn = cvMagneticZone?.querySelector('.footer-cv-btn');
+
+				if (cvMagneticZone && cvBtn) {
+					let cvRect = null;
+
+					cvMagneticZone.addEventListener('pointerenter', () => {
+						cvRect = cvMagneticZone.getBoundingClientRect();
+					});
+
+					cvMagneticZone.addEventListener('mousemove', (e) => {
+						const currentRect = cvRect || cvMagneticZone.getBoundingClientRect();
+						cvRect = currentRect;
+						const x = ((e.clientX - currentRect.left) / currentRect.width - 0.5) * currentRect.width;
+						const y = ((e.clientY - currentRect.top) / currentRect.height - 0.5) * currentRect.height;
+
+						cvBtn.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+						cvBtn.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+
+					cvMagneticZone.addEventListener('mouseleave', () => {
+						cvRect = null;
+						cvBtn.style.transform = 'translate(0, 0)';
+						cvBtn.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+					});
+				}
+
+				// Live footer time
+				const footerTime = document.getElementById('footerTime');
+				if (footerTime) {
+					const updateTime = () => {
+						const now = new Date();
+						const time = now.toLocaleTimeString('en-US', {
+							timeZone: 'Asia/Manila',
+							hour: '2-digit',
+							minute: '2-digit',
+							hour12: true
+						});
+						footerTime.textContent = `PHT ${time}`;
+					};
+					updateTime();
+					setInterval(updateTime, 1000);
+				}
 			});
-
-			// Listen for system preference changes
-			window
-				.matchMedia("(prefers-color-scheme: dark)")
-				.addEventListener("change", (e) => {
-					if (getStoredTheme() === "system") {
-						root.classList.toggle("dark", e.matches);
-					}
-				});
 		</script>
 
 		<style is:global>
-			/*
-			 * Establish layer order: "base" has lower priority than unlayered
-			 * styles, so theme.css overrides always win regardless of source
-			 * order in the bundled CSS.
-			 */
 			@layer base;
 
 			@layer base {
@@ -189,16 +355,14 @@ const navLinks = [
 				}
 
 				:root {
-					/* Colors - Elegant/Minimal palette */
-					--color-bg: #fafafa;
-					--color-text: #1a1a1a;
-					--color-muted: #6b7280;
-					--color-border: #e5e7eb;
-					--color-surface: #ffffff;
-					--color-accent: #7c3aed;
-					--color-accent-muted: #a78bfa;
+					--color-bg: #0a0a0a;
+					--color-text: #f5f5f5;
+					--color-muted: #a1a1aa;
+					--color-border: #27272a;
+					--color-surface: #18181b;
+					--color-accent: #a78bfa;
+					--color-accent-muted: #7c3aed;
 
-					/* Typography */
 					--font-sans: system-ui, -apple-system, sans-serif;
 					--font-mono: ui-monospace, monospace;
 
@@ -210,7 +374,6 @@ const navLinks = [
 					--font-size-3xl: 2.75rem;
 					--font-size-4xl: 3.5rem;
 
-					/* Spacing */
 					--spacing-xs: 0.25rem;
 					--spacing-sm: 0.5rem;
 					--spacing-md: 1rem;
@@ -220,43 +383,19 @@ const navLinks = [
 					--spacing-3xl: 4rem;
 					--spacing-4xl: 6rem;
 
-					/* Layout */
 					--max-width: 720px;
 					--wide-width: 1200px;
 					--radius: 4px;
 
-					/* Transitions */
 					--transition-fast: 150ms ease;
 					--transition-base: 200ms ease;
 					--transition-slow: 300ms ease;
 				}
 
-				/* Dark mode via system preference (when no explicit class) */
-				@media (prefers-color-scheme: dark) {
-					:root:not(.light) {
-						--color-bg: #0a0a0a;
-						--color-text: #f5f5f5;
-						--color-muted: #a1a1aa;
-						--color-border: #27272a;
-						--color-surface: #18181b;
-						--color-accent: #a78bfa;
-						--color-accent-muted: #7c3aed;
-					}
-				}
-
-				/* Explicit dark mode */
-				:root.dark {
-					--color-bg: #0a0a0a;
-					--color-text: #f5f5f5;
-					--color-muted: #a1a1aa;
-					--color-border: #27272a;
-					--color-surface: #18181b;
-					--color-accent: #a78bfa;
-					--color-accent-muted: #7c3aed;
-				}
-
 				html {
 					scroll-behavior: smooth;
+					overflow-x: clip;
+					max-width: 100vw;
 				}
 
 				body {
@@ -267,11 +406,12 @@ const navLinks = [
 					background: var(--color-bg);
 					-webkit-font-smoothing: antialiased;
 					min-height: 100vh;
+					overflow-x: clip;
+					max-width: 100vw;
+					position: relative;
 				}
 
-				a {
-					color: currentColor;
-				}
+				a { color: currentColor; }
 
 				img {
 					max-width: 100%;
@@ -279,41 +419,79 @@ const navLinks = [
 					display: block;
 				}
 
-				h1,
-				h2,
-				h3,
-				h4 {
+				h1, h2, h3, h4 {
 					font-family: var(--font-serif);
 					font-weight: 500;
 					line-height: 1.2;
 				}
 
-				h1 {
-					font-size: var(--font-size-4xl);
-				}
-
-				h2 {
-					font-size: var(--font-size-2xl);
-				}
-
-				h3 {
-					font-size: var(--font-size-xl);
-				}
+				h1 { font-size: var(--font-size-4xl); }
+				h2 { font-size: var(--font-size-2xl); }
+				h3 { font-size: var(--font-size-xl); }
 			}
 		</style>
 
-		<style>
+		<style is:global>
+			/* ── Loader ── */
+			.page-loader {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: var(--color-bg);
+				z-index: 9999;
+			}
+
+			.page-loader.loaded {
+				display: none;
+			}
+
+			.loader-grid {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+
+			.grid-line {
+				position: absolute;
+				top: 0;
+				width: 1px;
+				height: 100%;
+				background: rgba(255, 255, 255, 0.18);
+				transform: scaleY(0.05);
+				transform-origin: center;
+			}
+
+			.loader-content {
+				position: fixed;
+				bottom: var(--spacing-2xl);
+				right: var(--spacing-2xl);
+				z-index: 10;
+			}
+
+			.loader-number {
+				font-family: 'Anton', sans-serif;
+				font-size: clamp(3rem, 10vw, 8rem);
+				font-weight: 700;
+				color: var(--color-text);
+				letter-spacing: 0.05em;
+				line-height: 1;
+				transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+			}
+
+			/* ── Header ── */
 			.site-header {
 				position: fixed;
 				top: 0;
 				left: 0;
 				right: 0;
-				max-width: 100%;
-				margin: 0 auto;
-				padding: var(--spacing-xl) var(--spacing-lg);
-				background: transparent;
-				border-bottom: none;
+				width: 100%;
+				padding: var(--spacing-xl) var(--spacing-xl);
 				z-index: 1000;
+				mix-blend-mode: difference;
 			}
 
 			.nav {
@@ -324,165 +502,543 @@ const navLinks = [
 
 			.site-title {
 				font-family: "Syne", sans-serif;
-				font-size: var(--font-size-xl);
+				font-size: var(--font-size-sm);
 				font-weight: 800;
 				text-decoration: none;
 				text-transform: uppercase;
-				letter-spacing: -0.03em;
+				letter-spacing: 0.08em;
 				color: var(--color-text);
 			}
 
-			.nav-links {
-				display: flex;
+			/* ── Menu Button ── */
+			.site-header .magnetic-zone {
+				display: inline-flex;
 				align-items: center;
-				gap: var(--spacing-xl);
+				justify-content: center;
+				width: 100px;
+				height: 100px;
+				border-radius: 50%;
+				cursor: pointer;
+				margin-top: -25px;
+				margin-bottom: -25px;
 			}
 
-			.nav-links a {
-				text-decoration: none;
+			.menu-btn {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				background: none;
+				border: none;
+				cursor: pointer;
+				color: var(--color-text);
+				padding: 0;
+				will-change: transform;
+			}
+
+			.menu-btn-label {
 				font-family: var(--font-mono);
-				font-size: 0.75rem;
+				font-size: 0.7rem;
 				text-transform: uppercase;
-				letter-spacing: 0.05em;
-				color: var(--color-muted);
+				letter-spacing: 0.1em;
+				color: var(--color-text);
+			}
+
+			.menu-btn-icon {
+				display: flex;
+				flex-direction: column;
+				gap: 5px;
+				width: 22px;
+			}
+
+			.menu-btn-icon span {
+				display: block;
+				width: 100%;
+				height: 1px;
+				background: var(--color-text);
+				transition: transform 0.4s cubic-bezier(0.76,0,0.24,1), opacity 0.3s ease;
+				transform-origin: center;
+			}
+
+			.menu-btn.is-open .menu-btn-icon span:first-child {
+				transform: translateY(3px) rotate(45deg);
+			}
+
+			.menu-btn.is-open .menu-btn-icon span:last-child {
+				transform: translateY(-3px) rotate(-45deg);
+			}
+
+			/* ── Menu Overlay ── */
+			.menu-overlay {
+				position: fixed;
+				inset: 0;
+				background: var(--color-bg);
+				z-index: 999;
+				display: flex;
+				flex-direction: column;
+				padding: var(--spacing-4xl) var(--spacing-xl) var(--spacing-2xl);
+				clip-path: inset(0 0 100% 0);
+				transition: clip-path 0.7s cubic-bezier(0.76,0,0.24,1);
+			}
+
+			.menu-overlay.is-open {
+				clip-path: inset(0 0 0% 0);
+			}
+
+			.menu-overlay-inner {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				height: 100%;
+			}
+
+			.menu-nav {
+				display: flex;
+				flex-direction: column;
+				margin-top: auto;
+				padding-top: var(--spacing-2xl);
+			}
+
+			.menu-nav-item {
+				display: flex;
+				align-items: baseline;
+				gap: var(--spacing-lg);
+				text-decoration: none;
+				color: var(--color-text);
+				padding: var(--spacing-lg) 0;
+				border-top: 1px solid var(--color-border);
 				transition: color var(--transition-fast);
 			}
 
-			.nav-links a:hover {
-				color: var(--color-text);
+			.menu-nav-item:last-child {
+				border-bottom: 1px solid var(--color-border);
 			}
 
-			.nav-links a:empty {
-				display: none;
-			}
-
-			.nav-admin {
+			.menu-nav-item:hover {
 				color: var(--color-muted);
-				opacity: 0.6;
 			}
 
-			.nav-admin:hover {
+			.menu-nav-num {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				color: var(--color-muted);
+				letter-spacing: 0.05em;
+				flex-shrink: 0;
+			}
+
+			.menu-nav-label {
+				font-family: "Syne", sans-serif;
+				font-size: clamp(2.5rem, 8vw, 7rem);
+				font-weight: 800;
+				text-transform: uppercase;
+				letter-spacing: -0.04em;
+				line-height: 1;
+				transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+			}
+
+			.menu-nav-item:hover .menu-nav-label {
+				transform: translateX(1rem);
+			}
+
+			.menu-footer {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+				padding-top: var(--spacing-2xl);
+			}
+
+			.menu-tagline {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				color: var(--color-muted);
+			}
+
+			.menu-admin {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				color: var(--color-muted);
+				text-decoration: none;
+				opacity: 0.5;
+				transition: opacity var(--transition-fast);
+			}
+
+			.menu-admin:hover {
 				opacity: 1;
 			}
 
+			/* ── Main ── */
 			main {
-				min-height: calc(100vh - 200px);
+				min-height: 100vh;
+				overflow-x: clip;
+				max-width: 100vw;
+				position: relative;
+				z-index: 1;
+				background: var(--color-bg);
 			}
 
+			/* ── Footer ── */
 			.site-footer {
-				max-width: var(--wide-width);
-				margin: 0 auto;
-				padding: var(--spacing-4xl) var(--spacing-lg);
-				border-top: 3px solid var(--color-text);
+				width: 100%;
+				padding: 0;
+				border-top: 1px solid var(--color-border);
+				position: sticky;
+				bottom: 0;
+				z-index: 0;
 			}
 
 			.footer-content {
 				display: flex;
+				flex-direction: column;
+			}
+
+			/* Top row */
+			.footer-top {
+				display: flex;
 				justify-content: space-between;
 				align-items: flex-start;
+				padding: var(--spacing-2xl) var(--spacing-lg);
+				border-bottom: 1px solid var(--color-border);
+				max-width: var(--wide-width);
+				margin: 0 auto;
+				width: 100%;
 			}
 
-			.footer-brand {
+			.footer-top-left {
 				display: flex;
 				flex-direction: column;
-				gap: var(--spacing-xs);
+				gap: var(--spacing-lg);
 			}
 
-			.footer-logo {
-				font-family: "Syne", sans-serif;
-				font-size: var(--font-size-xl);
-				font-weight: 800;
+			.footer-availability {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--spacing-sm);
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
 				text-transform: uppercase;
-				letter-spacing: -0.03em;
-				color: var(--color-text);
+				letter-spacing: 0.08em;
+				color: #4ade80;
+				border: 1px solid rgba(74, 222, 128, 0.3);
+				padding: var(--spacing-xs) var(--spacing-md);
+				border-radius: 999px;
+				width: fit-content;
+			}
+
+			.availability-dot {
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: #4ade80;
+				animation: pulse-dot 2s ease-in-out infinite;
+			}
+
+			@keyframes pulse-dot {
+				0%, 100% { opacity: 1; transform: scale(1); }
+				50% { opacity: 0.5; transform: scale(0.8); }
 			}
 
 			.footer-tagline {
-				font-family: var(--font-mono);
-				text-transform: uppercase;
-				letter-spacing: 0.05em;
-				font-size: var(--font-size-xs);
+				font-family: "Syne", sans-serif;
+				font-size: clamp(1rem, 2vw, 1.4rem);
+				font-weight: 600;
 				color: var(--color-muted);
+				line-height: 1.4;
 			}
 
-			.footer-right {
+			.footer-top-right {
 				display: flex;
 				flex-direction: column;
 				align-items: flex-end;
 				gap: var(--spacing-lg);
 			}
 
-			.theme-switcher {
+			.footer-location,
+			.footer-timezone {
 				display: flex;
-				border: 1px solid var(--color-border);
-				padding: 2px;
-				background: transparent;
-				border-radius: 0;
+				flex-direction: column;
+				align-items: flex-end;
+				gap: 2px;
 			}
 
-			.theme-btn {
-				background: transparent;
-				border: none;
+			.footer-meta-label {
+				font-family: var(--font-mono);
+				font-size: 0.65rem;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
 				color: var(--color-muted);
+				opacity: 0.6;
+			}
+
+			.footer-meta-value {
 				font-family: var(--font-mono);
 				font-size: 0.75rem;
 				text-transform: uppercase;
 				letter-spacing: 0.05em;
-				padding: 4px 10px;
-				border-radius: 0;
+				color: var(--color-text);
+			}
+
+			/* Big name */
+			.footer-hero {
+				width: 100%;
+				border-top: 1px solid var(--color-border);
+				overflow: hidden;
+				display: flex;
+				align-items: flex-end;
+				height: 160px; /* controls how much gets cut off */
+			}
+
+			.footer-name {
+				font-family: "Syne", sans-serif;
+				font-size: clamp(2rem, 9.5vw, 14rem);
+				font-weight: 800;
+				text-transform: uppercase;
+				letter-spacing: -0.05em;
+				line-height: 0.8;
+				color: var(--color-text);
+				margin: 0;
+				padding: 0;
+				white-space: nowrap;
+				width: 100%;
+				text-align: center;
+			}
+
+			/* Bottom row */
+			.footer-bottom {
+				display: grid;
+				grid-template-columns: 1fr auto auto;
+				align-items: center;
+				gap: var(--spacing-2xl);
+				max-width: var(--wide-width);
+				margin: 0 auto;
+				width: 100%;
+				padding: var(--spacing-xl) var(--spacing-lg);
+			}
+
+			.footer-left {
+				display: flex;
+				justify-content: flex-start;
+			}
+
+			.footer-center {
+				display: flex;
+				justify-content: center;
+				gap: var(--spacing-xl);
+			}
+
+			.footer-right {
+				display: flex;
+				justify-content: flex-end;
+				margin-left: auto;
+			}
+
+			.footer-right .magnetic-zone {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
 				cursor: pointer;
+				width: 120px;
+				height: 60px;
+				border-radius: 0;
+			}
+
+			.footer-social {
+				display: inline-flex;
+				align-items: center;
+				gap: 4px;
+				text-decoration: none;
+				transition: color var(--transition-fast);
+			}
+
+			.footer-social-label {
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				color: var(--color-muted);
+				transition: color var(--transition-fast);
+			}
+
+			.footer-social-arrow {
+				font-size: 0.65rem;
+				color: var(--color-muted);
+				opacity: 0;
+				transform: translateY(2px);
 				transition: all var(--transition-fast);
 			}
 
-			.theme-btn:hover {
+			.footer-social:hover .footer-social-label {
 				color: var(--color-text);
 			}
 
-			.theme-btn.active {
-				background: var(--color-text);
-				color: var(--color-bg);
-				font-weight: bold;
+			.footer-social:hover .footer-social-arrow {
+				opacity: 1;
+				transform: translateY(0);
 			}
 
-			.footer-powered {
+			.footer-copyright {
 				font-family: var(--font-mono);
 				font-size: 0.75rem;
+				color: var(--color-muted);
 				text-transform: uppercase;
 				letter-spacing: 0.05em;
-				color: var(--color-muted);
 			}
 
-			.footer-powered a {
+			.footer-cv-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--spacing-md);
+				padding: var(--spacing-md) var(--spacing-xl);
+				border: 1px solid var(--color-text);
+				background: transparent;
 				color: var(--color-text);
 				text-decoration: none;
-				font-weight: 600;
+				font-family: var(--font-mono);
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				transition: all 0.3s ease;
+				white-space: nowrap;
+				will-change: transform;
 			}
 
-			.footer-powered a:hover {
-				text-decoration: underline;
+			.footer-cv-btn:hover {
+				background: var(--color-text);
+				color: var(--color-bg);
+			}
+
+			.cv-arrow {
+				transition: transform var(--transition-fast);
+				font-size: 1.1rem;
+				line-height: 1;
+			}
+
+			.footer-cv-btn:hover .cv-arrow {
+				transform: translateY(4px);
 			}
 
 			@media (max-width: 640px) {
-				.nav {
-					flex-direction: column;
-					gap: var(--spacing-md);
-					align-items: center;
+				.site-header {
+					padding: var(--spacing-md) var(--spacing-md);
 				}
 
-				.nav-links {
-					flex-wrap: wrap;
-					justify-content: center;
+				.menu-overlay {
+					padding: var(--spacing-3xl) var(--spacing-md) var(--spacing-xl);
+				}
+
+				.menu-nav {
+					padding-top: var(--spacing-xl);
+				}
+
+				.menu-nav-item {
+					padding: var(--spacing-md) 0;
+					gap: var(--spacing-md);
+				}
+
+				.menu-nav-num {
+					font-size: 0.6rem;
+				}
+
+				.menu-nav-label {
+					font-size: clamp(1.75rem, 10vw, 3.5rem);
+					letter-spacing: -0.02em;
+				}
+
+				.menu-footer {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: var(--spacing-md);
+					padding-top: var(--spacing-xl);
+				}
+
+				.menu-tagline {
+					font-size: 0.65rem;
+				}
+
+				.menu-admin {
+					font-size: 0.65rem;
+				}
+
+				.site-footer {
+					padding: 0 0 var(--spacing-3xl) 0;
 				}
 
 				.footer-content {
+					gap: var(--spacing-2xl);
+				}
+
+				.footer-hero {
+					padding: var(--spacing-2xl) var(--spacing-md) var(--spacing-xl) var(--spacing-md);
+					gap: var(--spacing-xl);
+				}
+
+				.footer-name {
+					font-size: clamp(1.75rem, 9.5vw, 4rem);
+					transform: scaleY(1.4);
+					letter-spacing: -0.03em;
+				}
+
+				.footer-top {
 					flex-direction: column;
 					gap: var(--spacing-xl);
-					align-items: center;
+					padding: var(--spacing-xl) var(--spacing-md);
+				}
+
+				.footer-top-right {
+					align-items: flex-start;
+					flex-direction: row;
+					gap: var(--spacing-2xl);
+				}
+
+				.footer-location,
+				.footer-timezone {
+					align-items: flex-start;
+				}
+
+				.footer-bottom {
+					display: flex;
+					flex-direction: column;
+					gap: var(--spacing-lg);
+					padding: var(--spacing-lg) var(--spacing-md);
 					text-align: center;
 				}
 
+				.footer-left {
+					justify-content: center;
+					order: 3;
+				}
+
+				.footer-center {
+					justify-content: center;
+					flex-wrap: wrap;
+					order: 1;
+				}
+
 				.footer-right {
-					align-items: center;
+					justify-content: center;
+					order: 2;
+					width: 100%;
+				}
+
+				.footer-right .magnetic-zone {
+					width: 100%;
+					display: flex;
+				}
+
+				.footer-cv-btn {
+					width: 100%;
+					justify-content: center;
+					padding: var(--spacing-md) var(--spacing-lg);
+				}
+
+				.footer-copyright {
+					font-size: 0.65rem;
+				}
+
+				.footer-link {
+					font-size: 0.65rem;
 				}
 
 				h1 {

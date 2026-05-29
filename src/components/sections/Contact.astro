@@ -1,0 +1,210 @@
+---
+interface Contact {
+	platform: string;
+	display_label: string;
+	url: string;
+}
+
+interface Props {
+	contacts: Contact[];
+}
+
+const { contacts } = Astro.props;
+---
+
+{
+	contacts.length > 0 && (
+		<section class="contact" id="contact">
+			
+			<div class="contact-grid-layout">
+				<div class="contact-left">
+					<div class="contact-sticky">
+						<span class="contact-number">[05] // CONNECT</span>
+						<div class="contact-heading-wrapper">
+							<div class="heading-plus top-left">+</div>
+							<div class="heading-plus top-right">+</div>
+							<h2 class="contact-heading">Contact</h2>
+						</div>
+						<p class="contact-intro">
+							Let's collaborate on your next venture. Reach
+							out directly or connect through my digital
+							channels.
+						</p>
+					</div>
+				</div>
+				<div class="contact-right">
+					<div class="contact-links-list">
+						{contacts.map((link: Contact) => (
+							<a
+								href={link.url}
+								class="contact-row"
+								target="_blank">
+								<span class="contact-platform">
+									{link.platform}
+								</span>
+								<div class="contact-details">
+									<span class="contact-label">
+										{link.display_label}
+									</span>
+									<span class="contact-arrow">
+										&rarr;
+									</span>
+								</div>
+							</a>
+						))}
+					</div>
+				</div>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.contact {
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: var(--spacing-4xl) var(--spacing-lg);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.contact-heading-wrapper {
+		position: relative;
+		display: inline-block;
+		padding: var(--spacing-md);
+	}
+
+	.heading-plus {
+		position: absolute;
+		font-size: 1.5rem;
+		color: var(--color-muted);
+		opacity: 0.5;
+		font-weight: 300;
+		line-height: 1;
+		pointer-events: none;
+	}
+
+	.heading-plus.top-left {
+		top: 0;
+		left: 0;
+	}
+
+	.heading-plus.top-right {
+		top: 0;
+		right: 0;
+	}
+
+	.contact-grid-layout {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--spacing-2xl);
+	}
+
+	@media (min-width: 768px) {
+		.contact-grid-layout {
+			grid-template-columns: 2fr 3fr;
+			gap: var(--spacing-4xl);
+		}
+	}
+
+	.contact-left {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.contact-sticky {
+		position: sticky;
+		top: 140px;
+	}
+
+	.contact-number {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-accent);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		display: block;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.contact-heading {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
+		font-weight: 800;
+		line-height: 1.1;
+		text-transform: uppercase;
+		color: var(--color-text);
+		margin-bottom: var(--spacing-lg);
+		letter-spacing: -0.03em;
+	}
+
+	.contact-intro {
+		font-size: var(--font-size-base);
+		color: var(--color-muted);
+		line-height: 1.6;
+	}
+
+	.contact-links-list {
+		display: flex;
+		flex-direction: column;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.contact-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--spacing-md) 0;
+		border-top: 1px solid var(--color-border);
+		text-decoration: none;
+		color: inherit;
+		transition:
+			border-color var(--transition-fast),
+			padding var(--transition-fast);
+	}
+
+	.contact-row:hover {
+		border-color: var(--color-text);
+		padding-left: var(--spacing-xs);
+		padding-right: var(--spacing-xs);
+	}
+
+	.contact-platform {
+		font-family: "Syne", sans-serif;
+		font-size: var(--font-size-lg);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: -0.02em;
+		color: var(--color-text);
+	}
+
+	.contact-details {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-md);
+	}
+
+	.contact-label {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+		letter-spacing: 0.05em;
+		transition: color var(--transition-fast);
+	}
+
+	.contact-arrow {
+		font-size: var(--font-size-lg);
+		color: var(--color-muted);
+		transition:
+			transform var(--transition-fast),
+			color var(--transition-fast);
+	}
+
+	.contact-row:hover .contact-label,
+	.contact-row:hover .contact-arrow {
+		color: var(--color-text);
+	}
+
+	.contact-row:hover .contact-arrow {
+		transform: translateX(4px);
+	}
+</style>

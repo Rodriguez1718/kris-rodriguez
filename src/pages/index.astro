@@ -2,6 +2,12 @@
 import { getEmDashCollection } from "emdash";
 import Base from "../layouts/Base.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import Hero from "../components/sections/Hero.astro";
+import About from "../components/sections/About.astro";
+import Skills from "../components/sections/Skills.astro";
+import FeaturedWorks from "../components/sections/FeaturedWorks.astro";
+import Experience from "../components/sections/Experience.astro";
+import Contact from "../components/sections/Contact.astro";
 
 // Fetch all data from EmDash
 const [
@@ -18,7 +24,7 @@ const [
 	getEmDashCollection("abouts", { limit: 1 }),
 ]);
 
-// Set Route Caching for Cloudflare
+// Set Route Caching
 if (import.meta.env.PROD && Astro.cache?.enabled) {
 	Astro.cache.set(projectsCache);
 	Astro.cache.set(skillsCache);
@@ -27,106 +33,16 @@ if (import.meta.env.PROD && Astro.cache?.enabled) {
 	Astro.cache.set(aboutsCache);
 }
 
-// Map entries to their raw data structure
 const featuredProjects = allProjects.slice(0, 4);
 const skills = skillsEntries.map(s => s.data);
 const experiences = experiencesEntries.map(e => e.data);
 const contacts = contactsEntries.map(c => c.data);
 const about = aboutsEntries[0]?.data || null;
-
-// Site identity
-const title = "Kris Rodriguez";
-const titleWords = title.split(" ");
 ---
 
 <Base>
-	<section class="hero">
-		<!-- Dynamic Topographic Background -->
-		<div class="topo-bg">
-			<svg class="topo-svg" xmlns="http://www.w3.org/2000/svg">
-				<filter id="topography" x="0" y="0" width="100%" height="100%">
-					<!-- Generate base noise -->
-					<feTurbulence
-						type="fractalNoise"
-						baseFrequency="0.003"
-						numOctaves="3"
-						result="noise"></feTurbulence>
-					<!-- Convert soft noise into sharp bands -->
-					<feComponentTransfer in="noise" result="bands">
-						<feFuncA
-							type="discrete"
-							tableValues="0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1"
-						></feFuncA>
-					</feComponentTransfer>
-					<!-- Dilate the bands to create a border -->
-					<feMorphology
-						operator="dilate"
-						radius="1.5"
-						in="bands"
-						result="dilated"></feMorphology>
-					<!-- Subtract original bands from dilated bands to get contour lines -->
-					<feComposite
-						operator="out"
-						in="dilated"
-						in2="bands"
-						result="lines"></feComposite>
-				</filter>
-				<!-- Apply the filter to a full-size rect -->
-				<rect
-					width="100%"
-					height="100%"
-					filter="url(#topography)"
-					fill="currentColor"></rect>
-			</svg>
-		</div>
-
-		<div class="hero-content">
-			<div class="hero-inner">
-				<!-- Large Title -->
-				<div class="title-container">
-					{
-						titleWords.map((word, index) => (
-							<div style="overflow: visible;">
-								<h1
-									class="title-word"
-									style={`
-									font-family: 'Syne', sans-serif; 
-									font-weight: 800; 
-									font-size: ${index === 0 ? "clamp(3rem, 12vw, 12rem)" : "clamp(1.2rem, 6vw, 10rem)"};
-									transform-origin: left;
-									animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.15}s both;
-								`}>
-									{index === 0
-										? word
-												.split("")
-												.map((letter, letterIdx) => (
-													<span
-														class={
-															letterIdx === 1
-																? "zoom-letter"
-																: "normal-letter"
-														}>
-														{letter}
-													</span>
-												))
-										: word}
-								</h1>
-							</div>
-						))
-					}
-				</div>
-
-				<!-- Subtitle Wrapper -->
-				<div
-					class="subtitle-container"
-					style="animation: fadeIn 1s ease-out 0.6s both;">
-					<div class="indigo-line"></div>
-					<p class="hero-tagline">Design &amp; Development</p>
-				</div>
-			</div>
-		</div>
-	</section>
-
+	<Hero />
+	
 	<div class="horizontal-scroll-container">
 		<div class="horizontal-track">
 			<!-- Motion Path SVG wrapper (placed inside track to slide along horizontally!) -->
@@ -159,382 +75,24 @@ const titleWords = title.split(" ");
 				</div>
 			</div>
 
-			<section class="about" id="about">
-				<div class="about-container">
-					<div class="about-grid">
-						<div class="about-left">
-							<div class="about-sticky">
-								<span class="about-number">
-									[01] // HISTORY
-								</span>
-								<h2 class="about-heading">About Me</h2>
-								<div class="about-badge">
-									<span class="pulse-dot"></span>
-									<span>Available for Work</span>
-								</div>
-							</div>
-						</div>
-						<div class="about-right">
-							<div class="about-content">
-								{
-									about?.content ? (
-										<p data-scramble>{about.content}</p>
-									) : (
-										<p data-scramble>
-											Add your bio in the Sanity Studio
-										</p>
-									)
-								}
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
+			<About content={about?.content as string | undefined} />
 
-			{
-				skills.length > 0 && (
-					<section class="skills" id="skills">
-						<div class="skills-container">
-							<div class="skills-grid-layout">
-								<div class="skills-left">
-									<div class="skills-sticky">
-										<span class="skills-number">
-											[02] // EXPERTISE
-										</span>
-										<h2 class="skills-heading">Skills</h2>
-										<p class="skills-intro">
-											A focused catalog of technologies
-											and tools used to construct
-											high-performance, aesthetically
-											exceptional web platforms.
-										</p>
-									</div>
-								</div>
-								<div class="skills-right">
-									<div class="skills-list">
-										{skills.map((skill) => (
-											<div class="skill-row">
-												<div class="skill-meta">
-													<span class="skill-name">
-														{skill.name}
-													</span>
-													{skill.category && (
-														<span class="skill-category-badge">
-															{skill.category}
-														</span>
-													)}
-												</div>
-												{skill.level && (
-													<div class="skill-level-indicator">
-														<span class="skill-level-label">
-															{skill.level}
-														</span>
-													</div>
-												)}
-											</div>
-										))}
-									</div>
-								</div>
-							</div>
-						</div>
-					</section>
-				)
-			}
+			<Skills skills={skills as any} />
 		</div>
 	</div>
 
-	{
-		featuredProjects.length > 0 ? (
-			<section class="featured" id="work">
-				<div class="featured-grid-layout">
-					<div class="featured-left">
-						<div class="featured-sticky">
-							<span class="featured-number">
-								[03] // PORTFOLIO
-							</span>
-							<h2 class="featured-heading">Selected Work</h2>
-							<p class="featured-intro">
-								A curated presentation of projects designed and
-								engineered to push the boundaries of digital
-								interface design.
-							</p>
-							<a href="/work" class="featured-link-btn">
-								<span>View All Projects</span>
-								<span class="arrow">&rarr;</span>
-							</a>
-						</div>
-					</div>
-					<div class="featured-right">
-						<div class="projects-grid">
-							{featuredProjects.map((project) => (
-								<ProjectCard
-									title={project.data.title ?? "Untitled"}
-									summary={project.data.summary}
-									featuredImage={project.data.featured_image as any}
-									href={`/work/${project.id}`}
-									client={project.data.client}
-									year={project.data.year}
-									tags={
-										project.data.tag
-											? project.data.tag
-													.split(",")
-													.map((t: string) => t.trim())
-											: []
-									}
-								/>
-							))}
-						</div>
-					</div>
-				</div>
-			</section>
-		) : (
-			<section class="empty-state">
-				<h2>No projects yet</h2>
-				<p>Add your first project in the admin panel.</p>
-				<a href="/_emdash/admin" class="btn">
-					Add a project
-				</a>
-			</section>
-		)
-	}
+	<FeaturedWorks projects={featuredProjects} />
 
-	{
-		experiences.length > 0 && (
-			<section class="experience" id="experience">
-				<div class="experience-grid-layout">
-					<div class="experience-left">
-						<div class="experience-sticky">
-							<span class="experience-number">
-								[04] // TIMELINE
-							</span>
-							<h2 class="experience-heading">Experience</h2>
-							<p class="experience-intro">
-								A timeline of technical roles, professional
-								achievements, and industry contributions.
-							</p>
-						</div>
-					</div>
-					<div class="experience-right">
-						<div class="experience-timeline">
-							{experiences.map((exp) => (
-								<div class="experience-row">
-									<div class="experience-row-header">
-										<div class="role-company-group">
-											<h3 class="experience-role">
-												{exp.role}
-											</h3>
-											<span class="experience-company">
-												{exp.company}
-											</span>
-										</div>
-										<span class="experience-dates">
-											{exp.start_date} —{" "}
-											{exp.end_date}
-										</span>
-									</div>
-									{exp.description && (
-										<div class="experience-description">
-											<p>{exp.description}</p>
-										</div>
-									)}
-								</div>
-							))}
-						</div>
-					</div>
-				</div>
-			</section>
-		)
-	}
+	<Experience experiences={experiences as any} />
 
-	{
-		contacts.length > 0 && (
-			<section class="contact" id="contact">
-				<div class="contact-grid-layout">
-					<div class="contact-left">
-						<div class="contact-sticky">
-							<span class="contact-number">[05] // CONNECT</span>
-							<h2 class="contact-heading">Contact</h2>
-							<p class="contact-intro">
-								Let's collaborate on your next venture. Reach
-								out directly or connect through my digital
-								channels.
-							</p>
-						</div>
-					</div>
-					<div class="contact-right">
-						<div class="contact-links-list">
-							{contacts.map((link) => (
-								<a
-									href={link.url}
-									class="contact-row"
-									target="_blank">
-									<span class="contact-platform">
-										{link.platform}
-									</span>
-									<div class="contact-details">
-										<span class="contact-label">
-											{link.display_label}
-										</span>
-										<span class="contact-arrow">
-											&rarr;
-										</span>
-									</div>
-								</a>
-							))}
-						</div>
-					</div>
-				</div>
-			</section>
-		)
-	}
+	<Contact contacts={contacts as any} />
 </Base>
 
 <style>
-	.hero {
-		position: relative;
-		height: 100vh;
-		min-height: 100vh;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-		background-color: transparent;
-		color: var(--color-text);
-		width: 100%;
-	}
-
-	.zoom-letter {
-		color: #ffffff !important;
-		background: none !important;
-		-webkit-background-clip: unset !important;
-		background-clip: unset !important;
-		display: inline-block;
-		position: relative;
-	}
-
-	.normal-letter {
-		color: var(--color-text) !important;
-		background: none !important;
-		-webkit-background-clip: unset !important;
-		background-clip: unset !important;
-		display: inline-block;
-		position: relative;
-	}
-
-	.topo-bg {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 0;
-		opacity: 0.1;
-		pointer-events: none;
-	}
-
-	.topo-svg {
-		width: 100%;
-		height: 100%;
-		color: var(--color-text);
-	}
-
-	.hero-content {
-		position: relative;
-		z-index: 10;
-		width: 100%;
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		box-sizing: border-box;
-	}
-
-	.hero-inner {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: var(--spacing-xl);
-	}
-
-	.title-container {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-sm);
-		width: 100%;
-		cursor: default;
-	}
-
-	.title-word {
-		font-family: var(--font-sans-syne), sans-serif;
-		font-weight: 800;
-		line-height: 0.85;
-		text-transform: uppercase;
-		letter-spacing: -0.05em;
-		white-space: nowrap;
-		color: transparent;
-		background: linear-gradient(
-			135deg,
-			var(--color-text) 30%,
-			var(--color-muted) 100%
-		);
-		-webkit-background-clip: text;
-		background-clip: text;
-	}
-
-	.subtitle-container {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-md);
-		margin-top: var(--spacing-lg);
-	}
-
-	.indigo-line {
-		width: 48px;
-		height: 2px;
-		background-color: #6366f1;
-	}
-
-	.hero-intro {
-		font-size: var(--font-size-md);
-		color: var(--color-muted);
-		max-width: 600px;
-		margin: var(--spacing-md) auto 0;
-	}
-
-	.hero-tagline {
-		font-size: clamp(1.75rem, 3vw, 2.25rem);
-		color: #d1d5db;
-		font-family: "Allura", cursive;
-		font-style: normal;
-		font-weight: 400;
-		letter-spacing: 0.03em;
-		line-height: 1.4;
-	}
-
-	@keyframes fadeUp {
-		0% {
-			opacity: 0;
-			transform: translateY(100%) scaleX(1);
-		}
-		100% {
-			opacity: 1;
-			transform: translateY(0) scaleX(1.05);
-		}
-	}
-
-	@keyframes fadeIn {
-		0% {
-			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
 
 	.horizontal-scroll-container {
 		width: 100%;
+		max-width: 100vw;
 		height: 100vh;
 		position: relative;
 		overflow: hidden;
@@ -578,678 +136,13 @@ const titleWords = title.split(" ");
 		will-change: transform;
 	}
 
-	.about {
-		width: 100vw;
-		height: 100vh;
-		min-height: 100vh;
-		flex-shrink: 0;
-		display: flex;
-		align-items: center;
-		background-color: transparent;
-		color: #000000;
-		position: relative;
-		overflow: hidden;
-	}
-
-	.about-container {
-		width: 100%;
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		position: relative;
-		z-index: 2;
-	}
-
-	.about-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--spacing-2xl);
-	}
-
-	@media (min-width: 768px) {
-		.about-grid {
-			grid-template-columns: 2fr 3fr;
-			gap: var(--spacing-4xl);
-		}
-	}
-
-	.about-left {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.about-sticky {
-		position: sticky;
-		top: var(--spacing-2xl);
-	}
-
-	.about-number {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--color-accent);
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		display: block;
-		margin-bottom: var(--spacing-sm);
-	}
-
-	.about-heading {
-		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
-		font-weight: 800;
-		line-height: 1.1;
-		text-transform: uppercase;
-		color: #000000;
-		margin-bottom: var(--spacing-lg);
-		letter-spacing: -0.03em;
-	}
-
-	.about-badge {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--spacing-sm);
-		padding: var(--spacing-xs) var(--spacing-md);
-		border: 1px solid var(--color-border);
-		background-color: var(--color-surface);
-		border-radius: 50px;
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		text-transform: uppercase;
-		color: var(--color-text);
-		width: fit-content;
-	}
-
-	.pulse-dot {
-		width: 8px;
-		height: 8px;
-		background-color: #10b981;
-		border-radius: 50%;
-		animation: pulse 2s infinite;
-	}
-
-	@keyframes pulse {
-		0% {
-			transform: scale(0.95);
-			box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-		}
-		70% {
-			transform: scale(1);
-			box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-		}
-		100% {
-			transform: scale(0.95);
-			box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-		}
-	}
-
-	.about-content {
-		font-size: var(--font-size-base);
-		color: #000000;
-		line-height: 1.8;
-	}
-
-	.about-content :global(p) {
-		margin-bottom: var(--spacing-lg);
-		color: #000000;
-	}
-
-	.about-content :global(p:first-of-type) {
-		font-size: var(--font-size-lg);
-		line-height: 1.6;
-		color: #000000;
-		font-weight: 500;
-	}
-
-	.about-content :global(h2) {
-		font-family: "Syne", sans-serif;
-		font-size: var(--font-size-xl);
-		font-weight: 700;
-		text-transform: uppercase;
-		margin-top: var(--spacing-xl);
-		margin-bottom: var(--spacing-sm);
-		color: #000000;
-	}
-
-	.featured {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		border-top: 1px solid var(--color-border);
-	}
-
-	.featured-grid-layout {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--spacing-2xl);
-	}
-
-	@media (min-width: 768px) {
-		.featured-grid-layout {
-			grid-template-columns: 2fr 3fr;
-			gap: var(--spacing-4xl);
-		}
-	}
-
-	.featured-left {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.featured-sticky {
-		position: sticky;
-		top: var(--spacing-2xl);
-	}
-
-	.featured-number {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--color-accent);
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		display: block;
-		margin-bottom: var(--spacing-sm);
-	}
-
-	.featured-heading {
-		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
-		font-weight: 800;
-		line-height: 1.1;
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin-bottom: var(--spacing-lg);
-		letter-spacing: -0.03em;
-	}
-
-	.featured-intro {
-		font-size: var(--font-size-base);
-		color: var(--color-muted);
-		line-height: 1.6;
-		margin-bottom: var(--spacing-lg);
-	}
-
-	.featured-link-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--spacing-sm);
-		padding: var(--spacing-sm) var(--spacing-lg);
-		border: 1px solid var(--color-text);
-		background: transparent;
-		color: var(--color-text);
-		text-decoration: none;
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		width: fit-content;
-		transition: all var(--transition-fast);
-	}
-
-	.featured-link-btn:hover {
-		background: var(--color-text);
-		color: var(--color-bg);
-	}
-
-	.featured-link-btn .arrow {
-		transition: transform var(--transition-fast);
-	}
-
-	.featured-link-btn:hover .arrow {
-		transform: translateX(4px);
-	}
-
-	.skills {
-		width: 100vw;
-		height: 100vh;
-		min-height: 100vh;
-		flex-shrink: 0;
-		display: flex;
-		align-items: center;
-		background-color: transparent;
-		color: #000000;
-		position: relative;
-		overflow: hidden;
-	}
-
-	.skills-container {
-		width: 100%;
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		position: relative;
-		z-index: 2;
-	}
-
-	.skills-grid-layout {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--spacing-2xl);
-	}
-
-	@media (min-width: 768px) {
-		.skills-grid-layout {
-			grid-template-columns: 2fr 3fr;
-			gap: var(--spacing-4xl);
-		}
-	}
-
-	.skills-left {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.skills-sticky {
-		position: sticky;
-		top: var(--spacing-2xl);
-	}
-
-	.skills-number {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--color-accent);
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		display: block;
-		margin-bottom: var(--spacing-sm);
-	}
-
-	.skills-heading {
-		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
-		font-weight: 800;
-		line-height: 1.1;
-		text-transform: uppercase;
-		color: #000000;
-		margin-bottom: var(--spacing-lg);
-		letter-spacing: -0.03em;
-	}
-
-	.skills-intro {
-		font-size: var(--font-size-base);
-		color: #000000;
-		line-height: 1.6;
-	}
-
-	.skills-list {
-		display: flex;
-		flex-direction: column;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.skill-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--spacing-md) 0;
-		border-top: 1px solid var(--color-border);
-		transition:
-			border-color var(--transition-fast),
-			padding var(--transition-fast);
-	}
-
-	.skill-row:hover {
-		border-color: #000000;
-		padding-left: var(--spacing-xs);
-		padding-right: var(--spacing-xs);
-	}
-
-	.skill-meta {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-md);
-	}
-
-	.skill-name {
-		font-family: "Syne", sans-serif;
-		font-size: var(--font-size-lg);
-		font-weight: 600;
-		color: #000000;
-		text-transform: uppercase;
-		letter-spacing: -0.02em;
-	}
-
-	.skill-category-badge {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		padding: 2px 8px;
-		border: 1px dashed var(--color-border);
-		border-radius: var(--radius);
-		color: #000000;
-	}
-
-	.skill-row:hover .skill-category-badge {
-		border-color: var(--color-accent);
-		color: var(--color-accent);
-	}
-
-	.skill-level-indicator {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-sm);
-	}
-
-	.skill-level-label {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		text-transform: uppercase;
-		color: #000000;
-		letter-spacing: 0.05em;
-	}
-
-	.skill-row:hover .skill-level-label {
-		color: #000000;
-	}
-
-	.experience {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		border-top: 1px solid var(--color-border);
-	}
-
-	.experience-grid-layout {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--spacing-2xl);
-	}
-
-	@media (min-width: 768px) {
-		.experience-grid-layout {
-			grid-template-columns: 2fr 3fr;
-			gap: var(--spacing-4xl);
-		}
-	}
-
-	.experience-left {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.experience-sticky {
-		position: sticky;
-		top: var(--spacing-2xl);
-	}
-
-	.experience-number {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--color-accent);
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		display: block;
-		margin-bottom: var(--spacing-sm);
-	}
-
-	.experience-heading {
-		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
-		font-weight: 800;
-		line-height: 1.1;
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin-bottom: var(--spacing-lg);
-		letter-spacing: -0.03em;
-	}
-
-	.experience-intro {
-		font-size: var(--font-size-base);
-		color: var(--color-muted);
-		line-height: 1.6;
-	}
-
-	.experience-timeline {
-		display: flex;
-		flex-direction: column;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.experience-row {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-md);
-		padding: var(--spacing-xl) 0;
-		border-top: 1px solid var(--color-border);
-		transition: border-color var(--transition-fast);
-	}
-
-	.experience-row:hover {
-		border-color: var(--color-text);
-	}
-
-	.experience-row-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		gap: var(--spacing-md);
-	}
-
-	.role-company-group {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-xs);
-	}
-
-	.experience-role {
-		font-family: "Syne", sans-serif;
-		font-size: var(--font-size-xl);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: -0.02em;
-		color: var(--color-text);
-		line-height: 1.1;
-	}
-
-	.experience-company {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--color-accent);
-		font-weight: 600;
-	}
-
-	.experience-dates {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		text-transform: uppercase;
-		color: var(--color-muted);
-		letter-spacing: 0.05em;
-		white-space: nowrap;
-		margin-top: 4px;
-	}
-
-	.experience-row:hover .experience-dates {
-		color: var(--color-text);
-	}
-
-	.experience-description {
-		font-size: var(--font-size-base);
-		color: var(--color-muted);
-		line-height: 1.7;
-	}
-
-	@media (max-width: 640px) {
-		.experience-row-header {
-			flex-direction: column;
-			gap: var(--spacing-sm);
-		}
-
-		.experience-dates {
-			margin-top: 0;
-		}
-	}
-
-	.contact {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		border-top: 1px solid var(--color-border);
-	}
-
-	.contact-grid-layout {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: var(--spacing-2xl);
-	}
-
-	@media (min-width: 768px) {
-		.contact-grid-layout {
-			grid-template-columns: 2fr 3fr;
-			gap: var(--spacing-4xl);
-		}
-	}
-
-	.contact-left {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.contact-sticky {
-		position: sticky;
-		top: var(--spacing-2xl);
-	}
-
-	.contact-number {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--color-accent);
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		display: block;
-		margin-bottom: var(--spacing-sm);
-	}
-
-	.contact-heading {
-		font-family: "Syne", sans-serif;
-		font-size: clamp(2.5rem, 5vw, 4rem);
-		font-weight: 800;
-		line-height: 1.1;
-		text-transform: uppercase;
-		color: var(--color-text);
-		margin-bottom: var(--spacing-lg);
-		letter-spacing: -0.03em;
-	}
-
-	.contact-intro {
-		font-size: var(--font-size-base);
-		color: var(--color-muted);
-		line-height: 1.6;
-	}
-
-	.contact-links-list {
-		display: flex;
-		flex-direction: column;
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.contact-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: var(--spacing-md) 0;
-		border-top: 1px solid var(--color-border);
-		text-decoration: none;
-		color: inherit;
-		transition:
-			border-color var(--transition-fast),
-			padding var(--transition-fast);
-	}
-
-	.contact-row:hover {
-		border-color: var(--color-text);
-		padding-left: var(--spacing-xs);
-		padding-right: var(--spacing-xs);
-	}
-
-	.contact-platform {
-		font-family: "Syne", sans-serif;
-		font-size: var(--font-size-lg);
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: -0.02em;
-		color: var(--color-text);
-	}
-
-	.contact-details {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-md);
-	}
-
-	.contact-label {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--color-muted);
-		letter-spacing: 0.05em;
-		transition: color var(--transition-fast);
-	}
-
-	.contact-arrow {
-		font-size: var(--font-size-lg);
-		color: var(--color-muted);
-		transition:
-			transform var(--transition-fast),
-			color var(--transition-fast);
-	}
-
-	.contact-row:hover .contact-label,
-	.contact-row:hover .contact-arrow {
-		color: var(--color-text);
-	}
-
-	.contact-row:hover .contact-arrow {
-		transform: translateX(4px);
-	}
-
 	.projects-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: var(--spacing-2xl);
 	}
 
-	.empty-state {
-		text-align: center;
-		padding: var(--spacing-4xl) var(--spacing-lg);
-		max-width: 400px;
-		margin: 0 auto;
-	}
-
-	.empty-state h2 {
-		font-size: var(--font-size-xl);
-		margin-bottom: var(--spacing-sm);
-	}
-
-	.empty-state p {
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-lg);
-	}
-
-	.btn {
-		display: inline-block;
-		padding: var(--spacing-sm) var(--spacing-lg);
-		background: var(--color-text);
-		color: var(--color-bg);
-		text-decoration: none;
-		border-radius: var(--radius);
-		font-size: var(--font-size-sm);
-		transition: opacity var(--transition-fast);
-	}
-
-	.btn:hover {
-		opacity: 0.85;
-	}
-
 	@media (max-width: 768px) {
-		.hero {
-			padding: var(--spacing-3xl) var(--spacing-lg);
-		}
-
-		.hero-title {
-			font-size: var(--font-size-3xl);
-		}
-
 		.projects-grid {
 			grid-template-columns: 1fr;
 		}
@@ -1258,6 +151,10 @@ const titleWords = title.split(" ");
 			flex-direction: column;
 			gap: var(--spacing-sm);
 			align-items: flex-start;
+		}
+
+		.horizontal-scroll-container {
+			overflow-x: hidden;
 		}
 	}
 </style>
@@ -1271,25 +168,28 @@ const titleWords = title.split(" ");
 
 	// Text scramble effect function
 	function initScrambleEffect(scrambleEl: Element) {
-		const chars = '!<>-_\\/[]{}—=+*^?#________';
-		const originalText = scrambleEl.textContent || '';
-		
+		const chars = "!<>-_\\/[]{}—=+*^?#________";
+		const originalText = scrambleEl.textContent || "";
+
 		// Create random reveal order
-		const indices = Array.from({ length: originalText.length }, (_, i) => i);
+		const indices = Array.from(
+			{ length: originalText.length },
+			(_, i) => i,
+		);
 		const shuffled = indices.sort(() => Math.random() - 0.5);
 		const revealOrder = new Map(shuffled.map((idx, order) => [idx, order]));
-		
+
 		let frame = 0;
 		const maxFrames = originalText.length * 0.5;
-		
+
 		const interval = setInterval(() => {
 			if (!scrambleEl) {
 				clearInterval(interval);
 				return;
 			}
-			
+
 			scrambleEl.textContent = originalText
-				.split('')
+				.split("")
 				.map((char, index) => {
 					const revealAt = revealOrder.get(index) || 0;
 					if (frame > revealAt) {
@@ -1297,141 +197,24 @@ const titleWords = title.split(" ");
 					}
 					return chars[Math.floor(Math.random() * chars.length)];
 				})
-				.join('');
-			
+				.join("");
+
 			if (frame >= maxFrames) {
 				scrambleEl.textContent = originalText;
 				clearInterval(interval);
 			}
-			
+
 			frame += 2;
 		}, 12);
 	}
 
-	const initHeroScroll = () => {
-		const hero = document.querySelector(".hero");
-		const heroInner = document.querySelector(".hero-inner") as HTMLElement;
-		const zoomLetter = document.querySelector(
-			".zoom-letter",
-		) as HTMLElement;
-
-		if (!hero || !heroInner || !zoomLetter) return;
-
-		const updateOrigin = () => {
-			// Save active transforms, transitions, and keyframe animations
-			const innerTransform = heroInner.style.transform;
-			const innerTransition = heroInner.style.transition;
-			const innerAnimation = heroInner.style.animation;
-
-			const titleWords = document.querySelectorAll(".title-word");
-			const savedTransforms = Array.from(titleWords).map(
-				(el) => (el as HTMLElement).style.transform,
-			);
-			const savedAnimations = Array.from(titleWords).map(
-				(el) => (el as HTMLElement).style.animation,
-			);
-
-			// Strip transforms, transitions, and keyframe animations to get clean static layout geometry
-			heroInner.style.transform = "none";
-			heroInner.style.transition = "none";
-			heroInner.style.animation = "none";
-
-			titleWords.forEach((el) => {
-				(el as HTMLElement).style.transform = "none";
-				(el as HTMLElement).style.transition = "none";
-				(el as HTMLElement).style.animation = "none";
-			});
-
-			const savedZoomTransform = zoomLetter.style.transform;
-			zoomLetter.style.transform = "none";
-
-			// Force reflow
-			zoomLetter.offsetHeight;
-
-			// Get layout bounding rects
-			const heroRect = hero.getBoundingClientRect();
-			const zoomRect = zoomLetter.getBoundingClientRect();
-			const innerRect = heroInner.getBoundingClientRect();
-
-			// Restore original styles
-			heroInner.style.transform = innerTransform;
-			heroInner.style.transition = innerTransition;
-			heroInner.style.animation = innerAnimation;
-
-			titleWords.forEach((el, idx) => {
-				(el as HTMLElement).style.transform = savedTransforms[idx];
-				(el as HTMLElement).style.animation = savedAnimations[idx];
-			});
-
-			zoomLetter.style.transform = savedZoomTransform;
-
-			// Calculate center coordinates of the second letter relative to the heroInner container
-			// This will be the pivot point from which the entire heroInner scales!
-			const originX = zoomRect.left - innerRect.left + zoomRect.width / 2;
-			const originY = zoomRect.top - innerRect.top + zoomRect.height / 2;
-
-			gsap.set(heroInner, {
-				transformOrigin: `${originX}px ${originY}px`,
-			});
-
-			// Calculate center coordinates of the zoom letter relative to the hero container
-			// This completely cancels out scroll and viewport position offsets
-			const letterHeroX =
-				zoomRect.left - heroRect.left + zoomRect.width / 2;
-			const letterHeroY =
-				zoomRect.top - heroRect.top + zoomRect.height / 2;
-
-			// The screen center relative to the hero container (which is 100vw x 100vh)
-			const targetCenterX = heroRect.width / 2;
-			const targetCenterY = heroRect.height / 2;
-
-			// The distance we need to translate heroInner to center the zoom letter
-			const moveX = targetCenterX - letterHeroX;
-			const moveY = targetCenterY - letterHeroY;
-
-			// Store move coordinates on heroInner so they can be accessed dynamically
-			heroInner.dataset.moveX = moveX.toString();
-			heroInner.dataset.moveY = moveY.toString();
-		};
-
-		// Run layout-clean calculations
-		updateOrigin();
-
-		// Recalculate on window resize or load
-		window.addEventListener("resize", updateOrigin);
-		window.addEventListener("load", updateOrigin);
-
-		// Animate title zoom and background opacity fade
-		const tl = gsap.timeline({
-			scrollTrigger: {
-				trigger: ".hero",
-				start: "top top",
-				end: "+=300%", // Longer scroll distance slows down zoom
-				scrub: 1, // More lag for smoother feel
-				pin: true,
-				pinSpacing: true,
-				invalidateOnRefresh: true,
-			},
+	const initHorizontalScroll = () => {
+		// Initial state for flying element and section elements (hidden and translated down)
+		gsap.set(".flying-element", {
+			opacity: 0,
+			scale: 0.5,
 		});
 
-		tl.to(
-			".normal-letter, .title-word:not(:first-child), .subtitle-container, .topo-bg",
-			{
-				ease: "power1.out",
-				duration: 0.5, // Slower fade out
-			},
-		).to(
-			heroInner,
-			{
-				scale: 800,
-				x: () => parseFloat(heroInner.dataset.moveX || "0"),
-				y: () => parseFloat(heroInner.dataset.moveY || "0"),
-				ease: "power2.in",
-				duration: 2, // Slower zoom
-			},
-			0,
-		);
-		// Initial state for about and skills section elements (hidden and translated down)
 		gsap.set(
 			".about-number, .about-heading, .about-badge, .about-content > *",
 			{
@@ -1458,22 +241,34 @@ const titleWords = title.split(" ");
 			},
 		});
 
-		// Glide the rotating brutalist star along the SVG dashed bezier curve
-		horizontalTl.to(
-			".flying-element",
-			{
-				motionPath: {
-					path: "#flying-path",
-					align: "#flying-path",
-					autoRotate: false,
-					alignOrigin: [0.5, 0.5],
+		// Glide the rotating brutalist star along the SVG dashed bezier curve with fade in
+		horizontalTl
+			.to(
+				".flying-element",
+				{
+					opacity: 1,
+					scale: 1,
+					duration: 0.5,
+					ease: "power2.out",
 				},
-				rotation: 720,
-				duration: 3.0,
-				ease: "none",
-			},
-			0,
-		);
+				0,
+			)
+			.to(
+				".flying-element",
+				{
+					motionPath: {
+						path: "#flying-path",
+						align: "#flying-path",
+						autoRotate: false,
+						alignOrigin: [0.5, 0.5],
+					},
+					rotation: 720,
+					duration: 3.0,
+					ease: "none",
+				},
+				0,
+			)
+
 
 		// 1. Fade up the about section contents (starts immediately, completes fully before slide)
 		horizontalTl
@@ -1487,11 +282,12 @@ const titleWords = title.split(" ");
 					ease: "power2.out",
 					onStart: () => {
 						// Trigger scramble when content starts fading in
-						const scrambleEl = document.querySelector('[data-scramble]');
+						const scrambleEl =
+							document.querySelector("[data-scramble]");
 						if (scrambleEl) {
 							initScrambleEffect(scrambleEl);
 						}
-					}
+					},
 				},
 				0,
 			)
@@ -1521,8 +317,255 @@ const titleWords = title.split(" ");
 
 	// Start animation when DOM is fully built
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initHeroScroll);
+		document.addEventListener("DOMContentLoaded", () => {
+			initHorizontalScroll();
+		});
 	} else {
-		initHeroScroll();
+		initHorizontalScroll();
+	}
+
+	// Featured Projects Timeline Animation
+	const initFeaturedTimeline = () => {
+		const timelineItems = gsap.utils.toArray(".timeline-item");
+		if (timelineItems.length === 0) return;
+
+		timelineItems.forEach((item: any) => {
+			const dot = item.querySelector(".timeline-dot");
+			const card = item.querySelector(".timeline-card-wrapper");
+			const line = item.querySelector(".timeline-line");
+
+			// Fade in / up the card wrapper
+			gsap.fromTo(
+				card,
+				{ opacity: 0, y: 40 },
+				{
+					opacity: 1,
+					y: 0,
+					duration: 0.8,
+					ease: "power2.out",
+					scrollTrigger: {
+						trigger: item,
+						start: "top 85%",
+						toggleActions: "play none none reverse",
+					},
+				},
+			);
+
+			// Activate/glow the dot
+			if (dot) {
+				gsap.fromTo(
+					dot,
+					{
+						scale: 0.8,
+						backgroundColor: "var(--color-bg)",
+						borderColor: "var(--color-text)",
+					},
+					{
+						scale: 1.2,
+						backgroundColor: "var(--color-accent)",
+						borderColor: "var(--color-accent)",
+						scrollTrigger: {
+							trigger: item,
+							start: "top 70%",
+							end: "bottom 30%",
+							toggleActions: "play reverse play reverse",
+						},
+					},
+				);
+			}
+
+			// Grow/draw the vertical line segment
+			if (line) {
+				gsap.fromTo(
+					line,
+					{ scaleY: 0 },
+					{
+						scaleY: 1,
+						transformOrigin: "top center",
+						ease: "none",
+						scrollTrigger: {
+							trigger: item,
+							start: "top 70%",
+							end: "bottom 70%",
+							scrub: true,
+						},
+					},
+				);
+			}
+		});
+	};
+
+	// Experience Section GSAP Transitions - Pinned Cards with Blur
+	const initExperienceTimeline = () => {
+		const cards = gsap.utils.toArray<HTMLElement>(".experience-card");
+		if (cards.length === 0) return;
+
+		// Fade in header elements
+		gsap.fromTo(
+			".experience-number, .experience-heading, .experience-intro",
+			{ opacity: 0, y: 30 },
+			{
+				opacity: 1,
+				y: 0,
+				stagger: 0.1,
+				scrollTrigger: {
+					trigger: ".experience-header",
+					start: "top 80%",
+					end: "top 50%",
+					scrub: true,
+				},
+			}
+		);
+
+		cards.forEach((card, index) => {
+			// Fade in card content on scroll
+			gsap.fromTo(
+				card.querySelector(".experience-card-content"),
+				{ opacity: 0, y: 30 },
+				{
+					opacity: 1,
+					y: 0,
+					scrollTrigger: {
+						trigger: card,
+						start: "top 80%",
+						end: "top 50%",
+						scrub: true,
+					},
+				}
+			);
+
+			// Skip animation for last card
+			if (index === cards.length - 1) return;
+
+			// Scale down and move down animation
+			gsap.to(card, {
+				scale: 0.9,
+				y: 150,
+				scrollTrigger: {
+					trigger: cards[index + 1],
+					start: "top 70%",
+					end: "top 10vh",
+					scrub: true,
+				},
+			});
+
+			// Blur animation - happens very early
+			gsap.to(card, {
+				filter: "blur(8px)",
+				scrollTrigger: {
+					trigger: cards[index + 1],
+					start: "top 490vh",
+					end: "top 10vh",
+					scrub: true,
+				},
+			});
+		});
+	};
+
+	// Magnetic Buttons
+	const initMagneticButtons = () => {
+		const zones = document.querySelectorAll(".magnetic-zone");
+		const strength = 0.35;
+
+		zones.forEach((zone: any) => {
+			const btn = zone.querySelector(".featured-link-btn");
+			if (!btn) return;
+
+			let rect: DOMRect | null = null;
+
+			zone.addEventListener("pointerenter", () => {
+				rect = zone.getBoundingClientRect();
+			});
+
+			zone.addEventListener("mousemove", (e: MouseEvent) => {
+				const currentRect = rect || zone.getBoundingClientRect();
+				rect = currentRect;
+				const x = gsap.utils.mapRange(
+					currentRect.left,
+					currentRect.right,
+					-currentRect.width / 2,
+					currentRect.width / 2,
+					e.clientX,
+				);
+				const y = gsap.utils.mapRange(
+					currentRect.top,
+					currentRect.bottom,
+					-currentRect.height / 2,
+					currentRect.height / 2,
+					e.clientY,
+				);
+
+				gsap.to(btn, {
+					x: x * strength,
+					y: y * strength,
+					duration: 0.4,
+					ease: "power2.out",
+					overwrite: true,
+				});
+			});
+
+			zone.addEventListener("mouseleave", () => {
+				rect = null;
+				gsap.to(btn, {
+					x: 0,
+					y: 0,
+					duration: 0.7,
+					ease: "elastic.out(1, 0.4)",
+					overwrite: true,
+				});
+			});
+		});
+	};
+
+	// Contact section fade in
+	const initContactAnimation = () => {
+		// Fade in left side
+		gsap.fromTo(
+			".contact-number, .contact-heading, .contact-intro",
+			{ opacity: 0, y: 30 },
+			{
+				opacity: 1,
+				y: 0,
+				stagger: 0.1,
+				scrollTrigger: {
+					trigger: ".contact",
+					start: "top 80%",
+					end: "top 50%",
+					scrub: true,
+				},
+			}
+		);
+
+		// Fade in contact rows
+		gsap.fromTo(
+			".contact-row",
+			{ opacity: 0, x: 30 },
+			{
+				opacity: 1,
+				x: 0,
+				stagger: 0.1,
+				scrollTrigger: {
+					trigger: ".contact-links-list",
+					start: "top 80%",
+					end: "top 50%",
+					scrub: true,
+				},
+			}
+		);
+	};
+
+	// Initialize features
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", () => {
+			initFeaturedTimeline();
+			initExperienceTimeline();
+			initMagneticButtons();
+			initContactAnimation();
+		});
+	} else {
+		initFeaturedTimeline();
+		initExperienceTimeline();
+		initMagneticButtons();
+		initContactAnimation();
 	}
 </script>

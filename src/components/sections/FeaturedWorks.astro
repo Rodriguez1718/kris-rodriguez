@@ -1,0 +1,602 @@
+---
+import ProjectCard from "../ProjectCard.astro";
+
+interface Props {
+	projects: any[];
+}
+
+const { projects } = Astro.props;
+---
+
+{
+	projects.length > 0 ? (
+		<section class="featured" id="work">
+			<!-- Three.js Canvas Background -->
+			<canvas id="featured-canvas" class="featured-canvas"></canvas>
+			
+			<div class="featured-content">
+				<div class="featured-left">
+					<div class="featured-header">
+						<span class="featured-number">
+							[03] // PORTFOLIO
+						</span>
+						<div class="contact-heading-wrapper">
+							<div class="heading-plus top-left">+</div>
+							<div class="heading-plus top-right">+</div>
+							<h2 class="featured-heading">Selected Work</h2>
+						</div>
+						
+						<p class="featured-intro">
+							A curated presentation of projects designed and
+							engineered to push the boundaries of digital
+							interface design.
+						</p>
+					</div>
+					<div class="magnetic-zone">
+						<a href="/work" class="featured-link-btn">
+							<span>View All Projects</span>
+							<span class="arrow">&rarr;</span>
+						</a>
+					</div>
+				</div>
+				<div class="featured-right">
+					<div class="featured-timeline">
+						{projects.map(
+							(project: any, index: number) => (
+								<div class="timeline-item">
+									<div class="timeline-marker">
+										<div class="timeline-dot" />
+										{index < projects.length - 1 && (
+											<div class="timeline-line" />
+										)}
+									</div>
+									<div class="timeline-card-wrapper">
+										<div class="timeline-project-meta">
+											<span class="timeline-project-number">
+												0{index + 1}
+											</span>
+											{project.data.year && (
+												<span class="timeline-project-year">
+													{project.data.year}
+												</span>
+											)}
+										</div>
+										<ProjectCard
+											title={project.data.title ?? "Untitled"}
+											summary={project.data.summary}
+											featuredImage={project.data.featured_image as any}
+											href={`/work/${project.id}`}
+											client={project.data.client}
+											year={project.data.year}
+											tags={
+												project.data.tag
+													? project.data.tag
+															.split(",")
+															.map((t: string) => t.trim())
+													: []
+											}
+										/>
+									</div>
+								</div>
+							),
+						)}
+					</div>
+				</div>
+			</div>
+		</section>
+	) : (
+		<section class="empty-state">
+			<h2>No projects yet</h2>
+			<p>Add your first project in the admin panel.</p>
+			<a href="/keystatic" class="btn">
+				Add a project
+			</a>
+		</section>
+	)
+}
+
+<style>
+	.featured {
+		position: relative;
+		width: 100%;
+		min-height: 100vh;
+		padding: var(--spacing-4xl) 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.featured-canvas {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 0;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.featured-canvas.visible {
+		opacity: 0.3;
+	}
+
+	.featured-content {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: 0 var(--spacing-lg);
+		display: flex;
+		gap: var(--spacing-4xl);
+		align-items: flex-start;
+	}
+
+	.featured-left {
+		flex: 0 0 35%;
+		position: sticky;
+		top: 140px;
+		align-self: start;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-2xl);
+	}
+
+	.featured-header {
+		margin-bottom: var(--spacing-lg);
+	}
+
+	.featured-number {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-accent);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		display: block;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.featured-heading {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
+		font-weight: 800;
+		line-height: 1.1;
+		text-transform: uppercase;
+		color: var(--color-text);
+		margin-bottom: var(--spacing-lg);
+		letter-spacing: -0.03em;
+	}
+
+	.featured-intro {
+		font-size: var(--font-size-base);
+		color: var(--color-muted);
+		line-height: 1.6;
+		margin-bottom: var(--spacing-lg);
+	}
+
+	.featured-right {
+		flex: 1;
+		width: 100%;
+	}
+
+	.featured-timeline {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-3xl);
+		position: relative;
+		width: 100%;
+	}
+
+	.timeline-item {
+		display: flex;
+		gap: var(--spacing-xl);
+		position: relative;
+		width: 100%;
+	}
+
+	.timeline-marker {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		flex-shrink: 0;
+		width: 24px;
+		padding-top: 12px;
+	}
+
+	.timeline-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		border: 2px solid var(--color-text);
+		background-color: var(--color-bg);
+		z-index: 2;
+		position: relative;
+		transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.timeline-line {
+		position: absolute;
+		top: 24px;
+		bottom: calc(-1 * var(--spacing-3xl) - 12px);
+		width: 2px;
+		background-color: var(--color-border);
+		z-index: 1;
+		transform-origin: top center;
+	}
+
+	.timeline-card-wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-sm);
+	}
+
+	.timeline-project-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-muted);
+	}
+
+	.timeline-project-number {
+		color: var(--color-accent);
+		font-weight: 600;
+	}
+
+	.timeline-project-year {
+		font-weight: 500;
+	}
+
+	.magnetic-zone {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 280px;
+		height: 280px;
+		border-radius: 50%;
+		align-self: start;
+		margin-top: -115px;
+		margin-bottom: -115px;
+		margin-left: -50px;
+		margin-right: -50px;
+		cursor: pointer;
+	}
+
+	.featured-link-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		padding: var(--spacing-sm) var(--spacing-lg);
+		border: 1px solid var(--color-text);
+		background: transparent;
+		color: var(--color-text);
+		text-decoration: none;
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		width: fit-content;
+		position: relative;
+		will-change: transform;
+		transition:
+			background var(--transition-fast),
+			color var(--transition-fast);
+	}
+
+	.featured-link-btn:hover {
+		background: var(--color-text);
+		color: var(--color-bg);
+	}
+
+	.featured-link-btn .arrow {
+		transition: transform var(--transition-fast);
+	}
+
+	.featured-link-btn:hover .arrow {
+		transform: translateX(4px);
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: var(--spacing-4xl) var(--spacing-lg);
+		max-width: 400px;
+		margin: 0 auto;
+	}
+
+	.empty-state h2 {
+		font-size: var(--font-size-xl);
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.empty-state p {
+		color: var(--color-muted);
+		margin-bottom: var(--spacing-lg);
+	}
+
+	.btn {
+		display: inline-block;
+		padding: var(--spacing-sm) var(--spacing-lg);
+		background: var(--color-text);
+		color: var(--color-bg);
+		text-decoration: none;
+		border-radius: var(--radius);
+		font-size: var(--font-size-sm);
+		transition: opacity var(--transition-fast);
+	}
+
+	.btn:hover {
+		opacity: 0.85;
+	}
+
+	.contact-heading-wrapper {
+		position: relative;
+		display: inline-block;
+		padding: var(--spacing-md);
+	}
+
+	.heading-plus {
+		position: absolute;
+		font-size: 1.5rem;
+		color: var(--color-muted);
+		opacity: 0.5;
+		font-weight: 300;
+		line-height: 1;
+		pointer-events: none;
+	}
+
+	.heading-plus.top-left {
+		top: 0;
+		left: 0;
+	}
+
+	.heading-plus.top-right {
+		top: 0;
+		right: 0;
+	}
+
+	@media (max-width: 768px) {
+		.featured {
+			padding: var(--spacing-3xl) 0;
+		}
+
+		.featured-content {
+			flex-direction: column;
+			gap: var(--spacing-3xl);
+			padding: 0 var(--spacing-md);
+		}
+
+		.featured-left {
+			flex: 1;
+			position: relative;
+			top: 0;
+			width: 100%;
+		}
+
+		.featured-header {
+			margin-bottom: var(--spacing-xl);
+		}
+
+		.featured-heading {
+			font-size: clamp(2rem, 8vw, 3rem);
+		}
+
+		.featured-intro {
+			font-size: var(--font-size-sm);
+		}
+
+		.magnetic-zone {
+			width: 100%;
+			height: auto;
+			border-radius: 0;
+			margin: 0;
+			justify-content: flex-start;
+		}
+
+		.featured-link-btn {
+			width: 100%;
+			justify-content: center;
+			padding: var(--spacing-md) var(--spacing-xl);
+			font-size: 0.75rem;
+		}
+
+		.timeline-item {
+			gap: var(--spacing-md);
+		}
+
+		.timeline-marker {
+			width: 16px;
+		}
+
+		.timeline-dot {
+			width: 8px;
+			height: 8px;
+		}
+
+		.timeline-line {
+			width: 1px;
+		}
+	}
+</style>
+
+<script>
+	const initFeaturedBackground = () => {
+		const canvas = document.getElementById('featured-canvas') as HTMLCanvasElement;
+		if (!canvas) return;
+
+		import('three').then((THREE) => {
+			const section = document.querySelector('.featured') as HTMLElement;
+			if (!section) return;
+
+			// Scene setup
+			const scene = new THREE.Scene();
+			scene.fog = new THREE.Fog(0x000000, 8, 20);
+
+			// Camera
+			const camera = new THREE.PerspectiveCamera(
+				40,
+				canvas.clientWidth / canvas.clientHeight,
+				0.1,
+				100
+			);
+			camera.position.set(4, 3, 6);
+			camera.lookAt(0, 1, 0);
+
+			// Renderer
+			const renderer = new THREE.WebGLRenderer({
+				canvas,
+				alpha: true,
+				antialias: true,
+			});
+			renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+			renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+			canvas.classList.remove('visible');
+
+			// Lights
+			const ambient = new THREE.HemisphereLight(0xffffff, 0x444444, 0.1);
+			scene.add(ambient);
+
+			// Dramatic spotlight
+			const spotLight = new THREE.SpotLight(0xffffff, 120);
+			spotLight.position.set(3, 8, 3);
+			spotLight.angle = Math.PI / 8;
+			spotLight.penumbra = 1;
+			spotLight.decay = 1.5;
+			spotLight.distance = 20;
+			spotLight.castShadow = true;
+			spotLight.shadow.mapSize.width = 1024;
+			spotLight.shadow.mapSize.height = 1024;
+			spotLight.shadow.camera.near = 2;
+			spotLight.shadow.camera.far = 15;
+			scene.add(spotLight);
+			scene.add(spotLight.target);
+
+			// Textured ground plane
+			const textureLoader = new THREE.TextureLoader();
+			const floorTexture = textureLoader.load('https://threejs.org/examples/textures/disturb.jpg');
+			floorTexture.wrapS = THREE.RepeatWrapping;
+			floorTexture.wrapT = THREE.RepeatWrapping;
+			floorTexture.repeat.set(4, 4);
+
+			const plane = new THREE.Mesh(
+				new THREE.PlaneGeometry(30, 30),
+				new THREE.MeshStandardMaterial({ map: floorTexture, roughness: 0.9, metalness: 0.1 })
+			);
+			plane.rotation.x = -Math.PI / 2;
+			plane.position.y = -1;
+			plane.receiveShadow = true;
+			scene.add(plane);
+
+			// Load GLTF model
+			let mixer: any = null;
+			let modelMesh: any = null;
+            let smoothScrollProgress = 0;
+
+			import('three/examples/jsm/loaders/GLTFLoader.js').then(({ GLTFLoader }) => {
+				const loader = new GLTFLoader();
+				loader.load(
+					'/models/leda_and_the_swan.glb',
+					(gltf: any) => {
+						modelMesh = gltf.scene;
+						modelMesh.position.set(0, -1, 0);
+						modelMesh.scale.set(0.1, 0.1, 0.1);
+						modelMesh.traverse((child: any) => {
+							if (child.isMesh) {
+								child.castShadow = true;
+								child.receiveShadow = true;
+							}
+						});
+						scene.add(modelMesh);
+
+						if (gltf.animations.length > 0) {
+							mixer = new THREE.AnimationMixer(modelMesh);
+							const action = mixer.clipAction(gltf.animations[0]);
+							action.play();
+						}
+					},
+					undefined,
+					(error: any) => console.warn('GLTF load error:', error)
+				);
+			});
+
+			// Scroll-based animation
+			let scrollProgress = 0;
+
+			const updateScroll = () => {
+				const rect = section.getBoundingClientRect();
+				const sectionHeight = section.offsetHeight;
+				const windowHeight = window.innerHeight;
+
+				const top = Math.max(0, rect.top);
+				const bottom = Math.min(windowHeight, rect.bottom);
+
+				if (rect.bottom < 0 || rect.top > windowHeight) {
+					canvas.style.clipPath = 'inset(0px 0px 100% 0px)';
+					canvas.classList.remove('visible');
+				} else {
+					canvas.style.clipPath = `inset(${top}px 0px ${windowHeight - bottom}px 0px)`;
+					canvas.classList.add('visible');
+				}
+
+				scrollProgress = Math.max(0, Math.min(1, -rect.top / (sectionHeight - windowHeight)));
+			};
+
+			window.addEventListener('scroll', updateScroll);
+			updateScroll();
+
+			// Animation loop
+			const clock = new THREE.Clock();
+
+			const animate = () => {
+				requestAnimationFrame(animate);
+				const delta = clock.getDelta();
+
+				if (mixer) mixer.update(delta);
+
+                // Smoothly interpolate toward the target scroll progress
+                smoothScrollProgress += (scrollProgress - smoothScrollProgress) * 0.05;
+
+				// Move spotlight in a circle based on scroll
+				const angle = smoothScrollProgress * Math.PI * 2;
+                spotLight.position.x = Math.cos(angle) * 3;
+                spotLight.position.z = Math.sin(angle) * 3;
+                spotLight.position.y = 5 + Math.sin(smoothScrollProgress * Math.PI) * 2;
+
+				if (modelMesh) {
+					spotLight.target.position.copy(modelMesh.position);
+					spotLight.target.updateMatrixWorld();
+				}
+
+				renderer.render(scene, camera);
+			};
+
+			animate();
+
+			// Handle resize
+			const handleResize = () => {
+				camera.aspect = canvas.clientWidth / canvas.clientHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+			};
+
+			window.addEventListener('resize', handleResize);
+
+			return () => {
+				window.removeEventListener('scroll', updateScroll);
+				window.removeEventListener('resize', handleResize);
+				renderer.dispose();
+			};
+		});
+	};
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initFeaturedBackground);
+	} else {
+		initFeaturedBackground();
+	}
+</script>

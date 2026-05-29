@@ -16,6 +16,7 @@ export default defineConfig({
 	integrations: [
 		react(),
 		emdash({
+			siteUrl: "https://kris-rodriguez.krisjohn-rodriguez.workers.dev",
 			database: d1({ binding: "DB", session: "auto" }),
 		}),
 	],

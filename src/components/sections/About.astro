@@ -1,0 +1,210 @@
+---
+interface Props {
+	content?: string;
+}
+
+const { content } = Astro.props;
+---
+
+<section class="about" id="about">
+	<div class="about-container">
+		<div class="about-grid">
+			<div class="about-left">
+				<div class="about-sticky">
+					<span class="about-number">
+						[01] // HISTORY
+					</span>
+					<div class="contact-heading-wrapper">
+						<div class="heading-plus top-left">+</div>
+						<div class="heading-plus top-right">+</div>
+						<h2 class="about-heading">About Me</h2>
+					</div>
+					
+					<div class="about-badge">
+						<span class="pulse-dot"></span>
+						<span>Available for Work</span>
+					</div>
+				</div>
+			</div>
+			<div class="about-right">
+				<div class="about-content">
+					{
+						content ? (
+							<p>{content}</p>
+						) : (
+							<p>
+								Add your bio in the admin panel
+							</p>
+						)
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.about {
+		width: 100vw;
+		height: 100vh;
+		min-height: 100vh;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		background-color: transparent;
+		color: #000000;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.about-container {
+		width: 100%;
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: var(--spacing-4xl) var(--spacing-lg);
+		position: relative;
+		z-index: 2;
+	}
+
+	.about-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: var(--spacing-2xl);
+	}
+
+	@media (min-width: 768px) {
+		.about-grid {
+			grid-template-columns: 2fr 3fr;
+			gap: var(--spacing-4xl);
+		}
+	}
+
+	.about-left {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.about-sticky {
+		position: sticky;
+		top: var(--spacing-2xl);
+	}
+
+	.about-number {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-accent);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		display: block;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.about-heading {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
+		font-weight: 800;
+		line-height: 1.1;
+		text-transform: uppercase;
+		color: #000000;
+		margin-bottom: var(--spacing-lg);
+		letter-spacing: -0.03em;
+	}
+
+	.about-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		padding: var(--spacing-xs) var(--spacing-md);
+		border: 1px solid var(--color-border);
+		background-color: var(--color-surface);
+		border-radius: 50px;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		color: var(--color-text);
+		width: fit-content;
+	}
+
+	.pulse-dot {
+		width: 8px;
+		height: 8px;
+		background-color: #10b981;
+		border-radius: 50%;
+		animation: pulse 2s infinite;
+	}
+
+	@keyframes pulse {
+		0% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+		}
+		70% {
+			transform: scale(1);
+			box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+		}
+		100% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+		}
+	}
+
+	.about-content {
+		font-size: var(--font-size-base);
+		color: #000000;
+		line-height: 1.8;
+	}
+
+	.about-content :global(p) {
+		margin-bottom: var(--spacing-lg);
+		color: #000000;
+	}
+
+	.about-content :global(p:first-of-type) {
+		font-size: var(--font-size-lg);
+		line-height: 1.6;
+		color: #000000;
+		font-weight: 500;
+	}
+
+	.about-content :global(h2) {
+		font-family: "Syne", sans-serif;
+		font-size: var(--font-size-xl);
+		font-weight: 700;
+		text-transform: uppercase;
+		margin-top: var(--spacing-xl);
+		margin-bottom: var(--spacing-sm);
+		color: #000000;
+	}
+
+	.contact-heading-wrapper {
+		position: relative;
+		display: inline-block;
+		padding: var(--spacing-md);
+	}
+
+	.heading-plus {
+		position: absolute;
+		font-size: 1.5rem;
+		color: var(--color-muted);
+		opacity: 0.5;
+		font-weight: 300;
+		line-height: 1;
+		pointer-events: none;
+	}
+
+	.heading-plus.top-left {
+		top: 0;
+		left: 0;
+	}
+
+	.heading-plus.top-right {
+		top: 0;
+		right: 0;
+	}
+
+	@media (max-width: 768px) {
+		.about-container {
+			padding: var(--spacing-2xl) var(--spacing-md);
+		}
+	}
+</style>

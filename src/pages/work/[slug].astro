@@ -18,7 +18,6 @@ if (!project) {
 	return Astro.redirect("/404");
 }
 
-// Related projects: get all, sort, exclude current, take 2
 const { entries: allProjects, cacheHint: allProjectsCache } = await getEmDashCollection("projects", {
 	orderBy: { created_at: "desc" }
 });
@@ -32,104 +31,66 @@ if (import.meta.env.PROD && Astro.cache?.enabled) {
 	Astro.cache.set(allProjectsCache);
 }
 
-const featuredImgSrc = project.data.featured_image ?? undefined;
+const data = project.data as any;
 ---
 
 <Base
-	title={project.data.title}
-	description={project.data.summary}
-	image={featuredImgSrc}
+	title={data.title}
+	description={data.summary}
+	image={data.featured_image}
 >
 	<article class="project">
 		<header class="project-header">
 			<div class="project-meta">
-				{
-					project.data.client && (
-						<span class="project-client">
-							{project.data.client}
-						</span>
-					)
-				}
-				{
-					project.data.client && project.data.year && (
-						<span class="meta-separator">·</span>
-					)
-				}
-				{
-					project.data.year && (
-						<span class="project-year">
-							{project.data.year}
-						</span>
-					)
-				}
+				{data.client && <span class="project-client">{data.client}</span>}
+				{data.client && data.year && <span class="meta-separator">·</span>}
+				{data.year && <span class="project-year">{data.year}</span>}
 			</div>
-			<h1 class="project-title">
-				{project.data.title}
-			</h1>
-			{
-				project.data.summary && (
-					<p class="project-summary">
-						{project.data.summary}
-					</p>
-				)
-			}
-			{
-				project.data.url && (
-					<a
-						href={project.data.url}
-						class="project-link"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						View Live Project →
-					</a>
-				)
-			}
+			<h1 class="project-title">{data.title}</h1>
+			{data.summary && <p class="project-summary">{data.summary}</p>}
+			{data.url && (
+				<a href={data.url} class="project-link" target="_blank" rel="noopener noreferrer">
+					View Live Project →
+				</a>
+			)}
 		</header>
 
-		{
-			project.data.featured_image && (
-				<div class="featured-image">
-					<img
-						src={project.data.featured_image}
-						alt={project.data.featured_image_alt ?? project.data.title}
-						loading="lazy"
-					/>
-				</div>
-			)
-		}
+		{data.featured_image && (
+			<div class="featured-image">
+				<img src={data.featured_image} alt={data.featured_image_alt ?? data.title} loading="lazy" />
+			</div>
+		)}
 
-		{
-			project.data.content && (
-				<div class="project-content">
-					<PortableText value={project.data.content} />
-				</div>
-			)
-		}
+		{data.content && (
+			<div class="project-content">
+				<PortableText value={data.content} />
+			</div>
+		)}
 	</article>
 
-	{
-		otherProjects.length > 0 && (
-			<section class="more-projects">
-				<div class="more-inner">
-					<h2 class="more-title">More Work</h2>
-					<div class="more-grid">
-						{otherProjects.map((p) => (
+	{otherProjects.length > 0 && (
+		<section class="more-projects">
+			<div class="more-inner">
+				<h2 class="more-title">More Work</h2>
+				<div class="more-grid">
+					{otherProjects.map((p) => {
+						const d = p.data as any;
+						return (
 							<ProjectCard
-								title={p.data.title ?? "Untitled"}
-								summary={p.data.summary}
-								featuredImage={p.data.featured_image as any}
+								title={d.title ?? "Untitled"}
+								summary={d.summary}
+								featuredImage={d.featured_image}
 								href={`/work/${p.id}`}
-								client={p.data.client}
-								year={p.data.year}
-								tags={p.data.tag ? p.data.tag.split(",").map((t) => t.trim()) : []}
+								client={d.client}
+								year={d.year}
+								tags={d.tag ? d.tag.split(",").map((t: string) => t.trim()) : []}
 							/>
-						))}
-					</div>
+						);
+					})}
 				</div>
-			</section>
-		)
-	}
+			</div>
+		</section>
+	)}
 </Base>
 
 <style>
@@ -138,11 +99,7 @@ const featuredImgSrc = project.data.featured_image ?? undefined;
 		margin: 0 auto;
 		padding: 0 var(--spacing-lg) var(--spacing-4xl);
 	}
-
-	.project-header {
-		margin-bottom: var(--spacing-2xl);
-	}
-
+	.project-header { margin-bottom: var(--spacing-2xl); }
 	.project-meta {
 		font-size: var(--font-size-sm);
 		color: var(--color-muted);
@@ -150,11 +107,7 @@ const featuredImgSrc = project.data.featured_image ?? undefined;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
-
-	.meta-separator {
-		margin: 0 var(--spacing-sm);
-	}
-
+	.meta-separator { margin: 0 var(--spacing-sm); }
 	.project-title {
 		font-family: var(--font-serif);
 		font-size: var(--font-size-4xl);
@@ -162,14 +115,12 @@ const featuredImgSrc = project.data.featured_image ?? undefined;
 		line-height: 1.1;
 		margin-bottom: var(--spacing-lg);
 	}
-
 	.project-summary {
 		font-size: var(--font-size-lg);
 		color: var(--color-muted);
 		line-height: 1.6;
 		margin-bottom: var(--spacing-lg);
 	}
-
 	.project-link {
 		display: inline-block;
 		font-size: var(--font-size-sm);
@@ -177,103 +128,23 @@ const featuredImgSrc = project.data.featured_image ?? undefined;
 		text-decoration: none;
 		transition: color var(--transition-fast);
 	}
-
-	.project-link:hover {
-		color: var(--color-text);
-	}
-
-	.featured-image {
-		margin-bottom: var(--spacing-3xl);
-	}
-
-	.featured-image img {
-		width: 100%;
-		height: auto;
-		border-radius: var(--radius);
-	}
-
-	.project-content {
-		font-size: var(--font-size-base);
-		line-height: 1.7;
-	}
-
-	.project-content :global(p) {
-		margin-bottom: 1.5em;
-	}
-
-	.project-content :global(h2) {
-		font-family: var(--font-serif);
-		font-size: var(--font-size-2xl);
-		font-weight: 500;
-		margin-top: 2.5em;
-		margin-bottom: 0.75em;
-	}
-
-	.project-content :global(h3) {
-		font-family: var(--font-serif);
-		font-size: var(--font-size-xl);
-		font-weight: 500;
-		margin-top: 2em;
-		margin-bottom: 0.5em;
-	}
-
-	.project-content :global(blockquote) {
-		margin: 2em 0;
-		padding-left: var(--spacing-xl);
-		border-left: 2px solid var(--color-accent);
-		color: var(--color-muted);
-		font-family: var(--font-serif);
-		font-style: italic;
-		font-size: var(--font-size-lg);
-	}
-
-	.project-content :global(ul),
-	.project-content :global(ol) {
-		margin-bottom: 1.5em;
-		padding-left: 1.25em;
-	}
-
-	.project-content :global(li) {
-		margin-bottom: 0.5em;
-	}
-
-	.project-content :global(img) {
-		margin: 2em 0;
-		border-radius: var(--radius);
-	}
-
-	.more-projects {
-		background: var(--color-surface);
-		padding: var(--spacing-4xl) 0;
-		margin-top: var(--spacing-2xl);
-	}
-
-	.more-inner {
-		max-width: var(--wide-width);
-		margin: 0 auto;
-		padding: 0 var(--spacing-lg);
-	}
-
-	.more-title {
-		font-family: var(--font-serif);
-		font-size: var(--font-size-2xl);
-		font-weight: 500;
-		margin-bottom: var(--spacing-2xl);
-	}
-
-	.more-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: var(--spacing-2xl);
-	}
-
+	.project-link:hover { color: var(--color-text); }
+	.featured-image { margin-bottom: var(--spacing-3xl); }
+	.featured-image img { width: 100%; height: auto; border-radius: var(--radius); }
+	.project-content { font-size: var(--font-size-base); line-height: 1.7; }
+	.project-content :global(p) { margin-bottom: 1.5em; }
+	.project-content :global(h2) { font-family: var(--font-serif); font-size: var(--font-size-2xl); font-weight: 500; margin-top: 2.5em; margin-bottom: 0.75em; }
+	.project-content :global(h3) { font-family: var(--font-serif); font-size: var(--font-size-xl); font-weight: 500; margin-top: 2em; margin-bottom: 0.5em; }
+	.project-content :global(blockquote) { margin: 2em 0; padding-left: var(--spacing-xl); border-left: 2px solid var(--color-accent); color: var(--color-muted); font-family: var(--font-serif); font-style: italic; font-size: var(--font-size-lg); }
+	.project-content :global(ul), .project-content :global(ol) { margin-bottom: 1.5em; padding-left: 1.25em; }
+	.project-content :global(li) { margin-bottom: 0.5em; }
+	.project-content :global(img) { margin: 2em 0; border-radius: var(--radius); }
+	.more-projects { background: var(--color-surface); padding: var(--spacing-4xl) 0; margin-top: var(--spacing-2xl); }
+	.more-inner { max-width: var(--wide-width); margin: 0 auto; padding: 0 var(--spacing-lg); }
+	.more-title { font-family: var(--font-serif); font-size: var(--font-size-2xl); font-weight: 500; margin-bottom: var(--spacing-2xl); }
+	.more-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-2xl); }
 	@media (max-width: 768px) {
-		.project-title {
-			font-size: var(--font-size-3xl);
-		}
-
-		.more-grid {
-			grid-template-columns: 1fr;
-		}
+		.project-title { font-size: var(--font-size-3xl); }
+		.more-grid { grid-template-columns: 1fr; }
 	}
 </style>

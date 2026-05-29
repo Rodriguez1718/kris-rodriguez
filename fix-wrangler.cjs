@@ -1,56 +1,18 @@
-const fs = require('fs');
-const path = 'dist/server/wrangler.json';
-
-if (!fs.existsSync(path)) process.exit(0);
-
-const config = JSON.parse(fs.readFileSync(path, 'utf8'));
-
-// Remove reserved ASSETS binding
-if (config.assets) {
-  delete config.assets;
+﻿"use strict";
+const fs = require("fs");
+const filePath = "dist/server/wrangler.json";
+console.log("fix-wrangler: starting");
+const raw = fs.readFileSync(filePath, "utf8");
+const config = JSON.parse(raw);
+if (config.assets && config.assets.binding === "ASSETS") {
+  config.assets.binding = "STATIC_ASSETS";
 }
-
-// Remove fields incompatible with Pages
-delete config.main;
-delete config.rules;
-
-// Fix KV namespaces - remove ones without id or add placeholder
-if (config.kv_namespaces) {
-  config.kv_namespaces = config.kv_namespaces.filter(kv => kv.id);
-  if (config.kv_namespaces.length === 0) delete config.kv_namespaces;
-}
-
-// Fix triggers
-if (config.triggers && Object.keys(config.triggers).length === 0) {
-  delete config.triggers;
-}
-
-// Remove unknown fields that Pages rejects
-const knownFields = ['name', 'main', 'compatibility_date', 'compatibility_flags', 'd1_databases', 'r2_buckets', 'vars', 'routes', 'placement'];
-const unknownFields = ['definedEnvironments', 'ai_search_namespaces', 'ai_search', 'images', 'secrets_store_secrets', 'artifacts', 'unsafe_hello_world', 'flagship', 'worker_loaders', 'ratelimits', 'vpc_services', 'vpc_networks', 'python_modules', 'previews'];
-unknownFields.forEach(f => delete config[f]);
-
-// Remove dev-only fields
-if (config.dev) delete config.dev;
-
-// Add D1 binding if not present
+delete config.pages_build_output_dir;
+config.kv_namespaces = [{ binding: "SESSION", id: "c091027116584d5d854db2db15ef8fef" }];
 if (!config.d1_databases || config.d1_databases.length === 0) {
-  config.d1_databases = [{
-    binding: "DB",
-    database_name: "kris-rodriguez-db",
-    database_id: "e22002d0-5896-4295-96e2-94e4u375f52f"
-  }];
+  config.d1_databases = [{ binding: "DB", database_name: "kris-rodriguez-db", database_id: "e22002d0-5896-4295-95e2-94e4b375f52f" }];
+} else {
+  config.d1_databases = config.d1_databases.map(function(db) { db.database_id = "e22002d0-5896-4295-95e2-94e4b375f52f"; return db; });
 }
-
-// Ensure D1 has database_id
-config.d1_databases = config.d1_databases.map(db => {
-  if (!db.database_id) db.database_id = "e22002d0-5896-4295-96e2-94e4u375f52f";
-  return db;
-});
-
-fs.writeFileSync(path, JSON.stringify(config, null, 2));
-console.log('Fixed dist/server/wrangler.json');
-
-// Remove the deploy redirect so Pages uses root wrangler.jsonc
-try { fs.rmSync('.wrangler/deploy', { recursive: true }); } catch(e) {}
-console.log('Removed .wrangler/deploy redirect');
+fs.writeFileSync(filePath, JSON.stringify(config, null, 2));
+console.log("fix-wrangler: done");

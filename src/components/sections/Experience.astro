@@ -1,0 +1,454 @@
+---
+interface Experience {
+	role: string;
+	company: string;
+	start_date: string;
+	end_date: string;
+	description?: string;
+}
+
+interface Props {
+	experiences: Experience[];
+}
+
+const { experiences } = Astro.props;
+---
+
+{
+	experiences.length > 0 && (
+		<section class="experience" id="experience">
+			<!-- Vertical Lines Background -->
+			<div class="experience-bg-lines">
+				<div class="vertical-line"></div>
+				<div class="vertical-line"></div>
+				<div class="vertical-line"></div>
+				<div class="vertical-line"></div>
+				<div class="vertical-line"></div>
+				<div class="vertical-line"></div>
+			</div>
+			
+			<div class="experience-container">
+				<div class="experience-header">
+					<span class="experience-number">
+						[04] // TIMELINE
+					</span>
+					<div class="contact-heading-wrapper">
+							<div class="heading-plus top-left">+</div>
+							<div class="heading-plus top-right">+</div>
+							<h2 class="experience-heading">Experience</h2>
+					</div>
+					
+					<p class="experience-intro">
+						A timeline of technical roles, professional
+						achievements, and industry contributions.
+					</p>
+				</div>
+				
+				<div class="experience-timeline" id="experience-timeline">
+					{experiences.map((exp: Experience, index: number) => (
+						<div class="experience-card" data-index={index}>
+							<div class="experience-card-inner">
+								<div class="experience-card-content">
+									<div class="experience-card-left">
+										<h3 class="experience-card-title">
+											{exp.role}
+										</h3>
+										<div class="experience-card-meta">
+											<span class="experience-card-company">
+												{exp.company}
+											</span>
+											<span class="experience-card-dates">
+												{exp.start_date} — {exp.end_date}
+											</span>
+										</div>
+										{exp.description && (
+											<p class="experience-card-description">
+												{exp.description}
+											</p>
+										)}
+									</div>
+									<div class="experience-card-right">
+										<span class="experience-card-number">
+											{String(index + 1).padStart(2, '0')}
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.experience {
+		position: relative;
+		overflow: hidden;
+		background-color: #0a0a0a;
+		padding: var(--spacing-4xl) 0;
+		margin: 0;
+		max-width: 100%;
+		width: 100%;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.experience-bg-lines {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: space-evenly;
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	.vertical-line {
+		width: 1px;
+		height: 100%;
+		background: rgba(255, 255, 255, 0.2);
+		box-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+	}
+
+	.experience-container {
+		max-width: 100%;
+		width: 100%;
+		margin: 0 auto;
+		padding: 0;
+		position: relative;
+		z-index: 1;
+	}
+
+	.experience-header {
+		text-align: center;
+		margin-bottom: var(--spacing-4xl);
+		padding: 0 var(--spacing-lg);
+	}
+
+	.experience-number {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-accent);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		display: block;
+		margin-bottom: var(--spacing-sm);
+	}
+
+	.experience-heading {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(2.5rem, 5vw, 4.5rem);
+		font-weight: 800;
+		line-height: 1.1;
+		text-transform: uppercase;
+		color: var(--color-text);
+		margin-bottom: var(--spacing-lg);
+		letter-spacing: -0.03em;
+	}
+
+	.experience-intro {
+		font-size: var(--font-size-lg);
+		color: var(--color-muted);
+		line-height: 1.6;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.experience-timeline {
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		gap: 0;
+	}
+
+	.experience-card {
+		position: sticky;
+		min-height: 350px;
+		margin-bottom: var(--spacing-md);
+		margin-left: var(--spacing-lg);
+		margin-right: var(--spacing-lg);
+		will-change: transform, filter;
+	}
+
+	.experience-card:nth-child(1) {
+		top: calc(10vh + 0px);
+	}
+
+	.experience-card:nth-child(2) {
+		top: calc(10vh + 30px);
+	}
+
+	.experience-card:nth-child(3) {
+		top: calc(10vh + 60px);
+	}
+
+	.experience-card:nth-child(4) {
+		top: calc(10vh + 90px);
+	}
+
+	.experience-card:nth-child(5) {
+		top: calc(10vh + 120px);
+	}
+
+	.experience-card:nth-child(6) {
+		top: calc(10vh + 150px);
+	}
+
+	.experience-card:nth-child(7) {
+		top: calc(10vh + 180px);
+	}
+
+	.experience-card:nth-child(8) {
+		top: calc(10vh + 210px);
+	}
+
+	.experience-card:nth-child(9) {
+		top: calc(10vh + 240px);
+	}
+
+	.experience-card:nth-child(10) {
+		top: calc(10vh + 270px);
+	}
+
+	.experience-card-inner {
+		background: var(--color-surface, #ffffff);
+		border: 2px solid var(--color-border, #e5e7eb);
+		border-radius: 0;
+		padding: var(--spacing-3xl) var(--spacing-2xl);
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		transition: all var(--transition-fast);
+		position: relative;
+	}
+
+	.experience-card:nth-child(even) .experience-card-inner {
+		background: var(--color-bg, #fafafa);
+	}
+
+	.experience-card-content {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: var(--spacing-2xl);
+		height: 100%;
+	}
+
+	.experience-card-left {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-md);
+	}
+
+	.experience-card-title {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(2rem, 4vw, 3.5rem);
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: -0.02em;
+		line-height: 0.95;
+		color: var(--color-text, #1a1a1a);
+		margin: 0;
+	}
+
+	.experience-card-meta {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-xs);
+		margin-top: var(--spacing-sm);
+	}
+
+	.experience-card-company {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--color-accent, #7c3aed);
+		font-weight: 600;
+	}
+
+	.experience-card-dates {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--color-muted, #6b7280);
+		opacity: 1;
+	}
+
+	.experience-card-description {
+		font-size: var(--font-size-base);
+		line-height: 1.6;
+		color: var(--color-muted, #6b7280);
+		max-width: 600px;
+		margin-top: var(--spacing-md);
+	}
+
+	.experience-card-right {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		right: var(--spacing-2xl);
+		top: 0;
+		bottom: 0;
+	}
+
+	.experience-card-number {
+		font-family: "Syne", sans-serif;
+		font-size: clamp(8rem, 20vw, 18rem);
+		font-weight: 800;
+		line-height: 1;
+		color: rgba(255, 255, 255, 0.1);
+		user-select: none;
+	}
+
+	.contact-heading-wrapper {
+		position: relative;
+		display: inline-block;
+		padding: var(--spacing-md);
+	}
+
+	.heading-plus {
+		position: absolute;
+		font-size: 1.5rem;
+		color: var(--color-muted);
+		opacity: 0.5;
+		font-weight: 300;
+		line-height: 1;
+		pointer-events: none;
+	}
+
+	.heading-plus.top-left {
+		top: 0;
+		left: 0;
+	}
+
+	.heading-plus.top-right {
+		top: 0;
+		right: 0;
+	}
+
+	@media (max-width: 768px) {
+		.experience {
+			padding: var(--spacing-3xl) 0;
+		}
+
+		.experience-header {
+			margin-bottom: var(--spacing-3xl);
+			padding: 0 var(--spacing-md);
+			overflow: hidden;
+		}
+
+		.contact-heading-wrapper {
+			max-width: 100%;
+			overflow: hidden;
+		}
+
+		.experience-heading {
+			font-size: clamp(1.5rem, 7vw, 2.5rem);
+			word-break: keep-all;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.experience-intro {
+			font-size: var(--font-size-base);
+			padding: 0 var(--spacing-sm);
+		}
+
+		.experience-card {
+			min-height: auto;
+			margin-left: var(--spacing-md);
+			margin-right: var(--spacing-md);
+			margin-bottom: var(--spacing-lg);
+		}
+
+		.experience-card:nth-child(1) {
+			top: calc(5vh + 0px);
+		}
+
+		.experience-card:nth-child(2) {
+			top: calc(5vh + 20px);
+		}
+
+		.experience-card:nth-child(3) {
+			top: calc(5vh + 40px);
+		}
+
+		.experience-card:nth-child(4) {
+			top: calc(5vh + 60px);
+		}
+
+		.experience-card:nth-child(5) {
+			top: calc(5vh + 80px);
+		}
+
+		.experience-card:nth-child(6) {
+			top: calc(5vh + 100px);
+		}
+
+		.experience-card:nth-child(7) {
+			top: calc(5vh + 120px);
+		}
+
+		.experience-card:nth-child(8) {
+			top: calc(5vh + 140px);
+		}
+
+		.experience-card:nth-child(9) {
+			top: calc(5vh + 160px);
+		}
+
+		.experience-card:nth-child(10) {
+			top: calc(5vh + 180px);
+		}
+
+		.experience-card-inner {
+			padding: var(--spacing-2xl) var(--spacing-lg);
+		}
+
+		.experience-card-content {
+			flex-direction: column;
+			gap: var(--spacing-lg);
+		}
+
+		.experience-card-title {
+			font-size: clamp(1.5rem, 8vw, 2.5rem);
+		}
+
+		.experience-card-description {
+			font-size: var(--font-size-sm);
+			max-width: 100%;
+		}
+
+		.experience-card-right {
+			position: relative;
+			right: auto;
+			top: auto;
+			bottom: auto;
+			align-self: flex-end;
+			margin-top: var(--spacing-md);
+		}
+
+		.experience-card-number {
+			font-size: clamp(3rem, 15vw, 5rem);
+			opacity: 0.8;
+		}
+
+		.experience-bg-lines {
+			display: flex;
+		}
+
+		.vertical-line {
+			background: rgba(255, 255, 255, 0.1);
+		}
+	}
+</style>
