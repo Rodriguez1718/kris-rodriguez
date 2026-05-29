@@ -1,0 +1,13 @@
+﻿{
+    "name": "kris-rodriguez",
+    "compatibility_date": "2026-02-24",
+    "compatibility_flags": ["nodejs_compat"],
+    "pages_build_output_dir": "./dist",
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "kris-rodriguez-db",
+            "database_id": "e22002d0-5896-4295-96e2-94e4u375f52f"
+        }
+    ]
+}
