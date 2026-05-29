@@ -3,9 +3,98 @@
 
 /// <reference types="emdash/locals" />
 
-import type { ContentBylineCredit } from "emdash";
+import type { ContentBylineCredit, PortableTextBlock } from "emdash";
+
+export interface About {
+  id: string;
+  slug: string | null;
+  status: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+}
+
+export interface Contact {
+  id: string;
+  slug: string | null;
+  status: string;
+  platform: string;
+  url: string;
+  display_label?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+}
+
+export interface Experience {
+  id: string;
+  slug: string | null;
+  status: string;
+  company: string;
+  role: string;
+  start_date?: string;
+  end_date?: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+}
+
+export interface Page {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  content?: PortableTextBlock[];
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+}
+
+export interface Project {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  featured_image: string;
+  featured_image_alt?: string;
+  client?: string;
+  year?: string;
+  summary?: string;
+  content?: PortableTextBlock[];
+  url?: string;
+  tag?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+}
+
+export interface Skill {
+  id: string;
+  slug: string | null;
+  status: string;
+  name: string;
+  category?: string;
+  level?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  bylines?: ContentBylineCredit[];
+}
 
 declare module "emdash" {
   interface EmDashCollections {
+    abouts: About;
+    contacts: Contact;
+    experiences: Experience;
+    pages: Page;
+    projects: Project;
+    skills: Skill;
   }
 }
