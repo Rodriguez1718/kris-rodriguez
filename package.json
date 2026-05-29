@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node -e \"require('fs').rmSync('dist/server/wrangler.json',{force:true});require('fs').rmSync('dist/.wrangler',{recursive:true,force:true})\"",
     "preview": "astro preview",
     "deploy": "wrangler pages deploy dist",
     "typecheck": "astro check"
