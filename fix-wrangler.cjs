@@ -10,6 +10,10 @@ if (config.assets) {
   delete config.assets;
 }
 
+// Remove fields incompatible with Pages
+delete config.main;
+delete config.rules;
+
 // Fix KV namespaces - remove ones without id or add placeholder
 if (config.kv_namespaces) {
   config.kv_namespaces = config.kv_namespaces.filter(kv => kv.id);
@@ -46,3 +50,7 @@ config.d1_databases = config.d1_databases.map(db => {
 
 fs.writeFileSync(path, JSON.stringify(config, null, 2));
 console.log('Fixed dist/server/wrangler.json');
+
+// Remove the deploy redirect so Pages uses root wrangler.jsonc
+try { fs.rmSync('.wrangler/deploy', { recursive: true }); } catch(e) {}
+console.log('Removed .wrangler/deploy redirect');
