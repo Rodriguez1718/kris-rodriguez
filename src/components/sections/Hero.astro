@@ -131,7 +131,6 @@ const titleWords = title.split(" ");
 		height: 100%;
 		z-index: 0;
 		pointer-events: none;
-        filter: blur(2px);
 	}
 
 	.hero-content {
@@ -390,113 +389,99 @@ const titleWords = title.split(" ");
         });
     };
 
+	// ─── Hero Scroll Zoom ─────────────────────────────────────────────────────
 	const initHeroScroll = () => {
-        const hero = document.querySelector(".hero");
-        const heroInner = document.querySelector(".hero-inner") as HTMLElement;
-        const zoomLetter = document.querySelector(".zoom-letter") as HTMLElement;
+		const hero = document.querySelector(".hero");
+		const heroInner = document.querySelector(".hero-inner") as HTMLElement;
+		const zoomLetter = document.querySelector(".zoom-letter") as HTMLElement;
 
-        if (!hero || !heroInner || !zoomLetter) return;
+		if (!hero || !heroInner || !zoomLetter) return;
 
-        // Force GPU layer on heroInner upfront so the browser doesn't
-        // promote it mid-animation (which causes a jank spike)
-        gsap.set(heroInner, { willChange: "transform", z: 0.01 });
+		const updateOrigin = () => {
+			const innerTransform = heroInner.style.transform;
+			const innerTransition = heroInner.style.transition;
+			const innerAnimation = heroInner.style.animation;
 
-        const updateOrigin = () => {
-            const innerTransform = heroInner.style.transform;
-            const innerTransition = heroInner.style.transition;
-            const innerAnimation = heroInner.style.animation;
+			const titleWords = document.querySelectorAll(".title-word");
+			const savedTransforms = Array.from(titleWords).map(
+				(el) => (el as HTMLElement).style.transform,
+			);
+			const savedAnimations = Array.from(titleWords).map(
+				(el) => (el as HTMLElement).style.animation,
+			);
 
-            const titleWords = document.querySelectorAll(".title-word");
-            const savedTransforms = Array.from(titleWords).map(
-                (el) => (el as HTMLElement).style.transform,
-            );
-            const savedAnimations = Array.from(titleWords).map(
-                (el) => (el as HTMLElement).style.animation,
-            );
+			heroInner.style.transform = "none";
+			heroInner.style.transition = "none";
+			heroInner.style.animation = "none";
 
-            heroInner.style.transform = "none";
-            heroInner.style.transition = "none";
-            heroInner.style.animation = "none";
+			titleWords.forEach((el) => {
+				(el as HTMLElement).style.transform = "none";
+				(el as HTMLElement).style.transition = "none";
+				(el as HTMLElement).style.animation = "none";
+			});
 
-            titleWords.forEach((el) => {
-                (el as HTMLElement).style.transform = "none";
-                (el as HTMLElement).style.transition = "none";
-                (el as HTMLElement).style.animation = "none";
-            });
+			const savedZoomTransform = zoomLetter.style.transform;
+			zoomLetter.style.transform = "none";
+			zoomLetter.offsetHeight; // force reflow
 
-            const savedZoomTransform = zoomLetter.style.transform;
-            zoomLetter.style.transform = "none";
-            zoomLetter.offsetHeight;
+			const heroRect = hero.getBoundingClientRect();
+			const zoomRect = zoomLetter.getBoundingClientRect();
+			const innerRect = heroInner.getBoundingClientRect();
 
-            const heroRect = hero.getBoundingClientRect();
-            const zoomRect = zoomLetter.getBoundingClientRect();
-            const innerRect = heroInner.getBoundingClientRect();
+			heroInner.style.transform = innerTransform;
+			heroInner.style.transition = innerTransition;
+			heroInner.style.animation = innerAnimation;
 
-            heroInner.style.transform = innerTransform;
-            heroInner.style.transition = innerTransition;
-            heroInner.style.animation = innerAnimation;
+			titleWords.forEach((el, idx) => {
+				(el as HTMLElement).style.transform = savedTransforms[idx];
+				(el as HTMLElement).style.animation = savedAnimations[idx];
+			});
+			zoomLetter.style.transform = savedZoomTransform;
 
-            titleWords.forEach((el, idx) => {
-                (el as HTMLElement).style.transform = savedTransforms[idx];
-                (el as HTMLElement).style.animation = savedAnimations[idx];
-            });
-            zoomLetter.style.transform = savedZoomTransform;
+			const originX = zoomRect.left - innerRect.left + zoomRect.width / 2;
+			const originY = zoomRect.top - innerRect.top + zoomRect.height / 2;
+			gsap.set(heroInner, { transformOrigin: `${originX}px ${originY}px` });
 
-            const originX = zoomRect.left - innerRect.left + zoomRect.width / 2;
-            const originY = zoomRect.top - innerRect.top + zoomRect.height / 2;
-            gsap.set(heroInner, { transformOrigin: `${originX}px ${originY}px` });
+			const letterHeroX = zoomRect.left - heroRect.left + zoomRect.width / 2;
+			const letterHeroY = zoomRect.top - heroRect.top + zoomRect.height / 2;
+			const moveX = heroRect.width / 2 - letterHeroX;
+			const moveY = heroRect.height / 2 - letterHeroY;
 
-            const letterHeroX = zoomRect.left - heroRect.left + zoomRect.width / 2;
-            const letterHeroY = zoomRect.top - heroRect.top + zoomRect.height / 2;
-            const moveX = heroRect.width / 2 - letterHeroX;
-            const moveY = heroRect.height / 2 - letterHeroY;
+			heroInner.dataset.moveX = moveX.toString();
+			heroInner.dataset.moveY = moveY.toString();
+		};
 
-            heroInner.dataset.moveX = moveX.toString();
-            heroInner.dataset.moveY = moveY.toString();
-        };
+		updateOrigin();
+		window.addEventListener("resize", updateOrigin);
+		window.addEventListener("load", updateOrigin);
 
-        // Wait for fonts before measuring, prevents wrong origin on first load
-        document.fonts.ready.then(() => {
-            updateOrigin();
-        });
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: ".hero",
+				start: "top top",
+				end: "+=300%",
+				scrub: 1,
+				pin: true,
+				pinSpacing: true,
+				invalidateOnRefresh: true,
+			},
+		});
 
-        window.addEventListener("resize", updateOrigin);
-        window.addEventListener("load", updateOrigin);
-
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".hero",
-                start: "top top",
-                end: "+=300%",
-                scrub: 0.4,           // was 1 — tighter scrub feels more responsive
-                pin: true,
-                pinSpacing: true,
-                invalidateOnRefresh: true,
-                anticipatePin: 1,     // prevents pin jump on fast scroll
-                fastScrollEnd: true,  // snaps cleanly when user scrolls fast
-            },
-        });
-
-        tl.to(
-            ".normal-letter, .title-word:not(:first-child), .subtitle-container, .topo-bg",
-            {
-                opacity: 0,           // was missing — without this GSAP has nothing to tween
-                ease: "power1.out",
-                duration: 0.5
-            },
-        ).to(
-            heroInner,
-            {
-                scale: 800,
-                x: () => parseFloat(heroInner.dataset.moveX || "0"),
-                y: () => parseFloat(heroInner.dataset.moveY || "0"),
-                ease: "power1.inOut", // was power2.in — inOut is smoother through the midpoint
-                duration: 2,
-                force3D: true,        // explicitly keep on GPU throughout the tween
-            },
-            0,
-        );
-    };
+		tl.to(
+			".normal-letter, .title-word:not(:first-child), .subtitle-container, .topo-bg",
+			{ ease: "power1.out", duration: 0.5 },
+		).to(
+			heroInner,
+			{
+				scale: 800,
+				x: () => parseFloat(heroInner.dataset.moveX || "0"),
+				y: () => parseFloat(heroInner.dataset.moveY || "0"),
+				ease: "power2.in",
+				duration: 2,
+			},
+			0,
+		);
+	};
 
 	// ─── Boot ─────────────────────────────────────────────────────────────────
     const init = () => {
